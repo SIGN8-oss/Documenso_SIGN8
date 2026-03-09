@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+﻿import { Trans } from '@lingui/react/macro';
 import { DocumentSigningOrder, DocumentStatus, RecipientRole, SigningStatus } from '@prisma/client';
 import { Clock8 } from 'lucide-react';
 import { Link, redirect } from 'react-router';
@@ -365,7 +365,7 @@ const SigningPageV1 = ({ data }: { data: Awaited<ReturnType<typeof handleV1Loade
             </Trans>
           </h2>
 
-          <p className="mt-2.5 max-w-[60ch] text-center text-sm font-medium text-muted-foreground/60 md:text-base">
+          <p className="mt-2.5 max-w-[60ch] text-center text-sm font-medium text-muted-foreground md:text-base">
             <Trans>This document has been cancelled by the owner.</Trans>
           </p>
 
@@ -374,14 +374,14 @@ const SigningPageV1 = ({ data }: { data: Awaited<ReturnType<typeof handleV1Loade
               <Trans>Go Back Home</Trans>
             </Link>
           ) : (
-            <p className="mt-36 text-sm text-muted-foreground/60">
+            <p className="mt-36 text-sm text-muted-foreground">
               <Trans>
                 Want to send slick signing links like this one?{' '}
                 <Link
-                  to="https://documenso.com"
+                  to="https://www.sign8.eu"
                   className="text-documenso-700 hover:text-documenso-600"
                 >
-                  Check out Documenso
+                  Check out Sign8
                 </Link>
                 .
               </Trans>
@@ -465,7 +465,7 @@ const SigningPageV2 = ({ data }: { data: Awaited<ReturnType<typeof handleV2Loade
             </Trans>
           </h2>
 
-          <p className="mt-2.5 max-w-[60ch] text-center text-sm font-medium text-muted-foreground/60 md:text-base">
+          <p className="mt-2.5 max-w-[60ch] text-center text-sm font-medium text-muted-foreground md:text-base">
             <Trans>This document has been cancelled by the owner.</Trans>
           </p>
 
@@ -474,14 +474,14 @@ const SigningPageV2 = ({ data }: { data: Awaited<ReturnType<typeof handleV2Loade
               <Trans>Go Back Home</Trans>
             </Link>
           ) : (
-            <p className="mt-36 text-sm text-muted-foreground/60">
+            <p className="mt-36 text-sm text-muted-foreground">
               <Trans>
                 Want to send slick signing links like this one?{' '}
                 <Link
-                  to="https://documenso.com"
+                  to="https://www.sign8.eu"
                   className="text-documenso-700 hover:text-documenso-600"
                 >
-                  Check out Documenso
+                  Check out Sign8
                 </Link>
                 .
               </Trans>

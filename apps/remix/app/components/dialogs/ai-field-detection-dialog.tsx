@@ -231,7 +231,7 @@ export const AiFieldDetectionDialog = ({
               <p className="mt-8 text-muted-foreground">{_(PROCESSING_MESSAGES[messageIndex])}</p>
 
               {progress && (
-                <p className="mt-2 text-xs text-muted-foreground/60">
+                <p className="mt-2 text-xs text-muted-foreground">
                   <Plural
                     value={progress.fieldsDetected}
                     one={
@@ -248,7 +248,7 @@ export const AiFieldDetectionDialog = ({
                 </p>
               )}
 
-              <p className="mt-2 max-w-[40ch] text-center text-xs text-muted-foreground/60">
+              <p className="mt-2 max-w-[40ch] text-center text-xs text-muted-foreground">
                 <Trans>This can take a minute or two depending on the size of your document.</Trans>
               </p>
 
@@ -281,7 +281,7 @@ export const AiFieldDetectionDialog = ({
                   <p className="mt-4 text-center text-sm text-muted-foreground">
                     <Trans>No fields were detected in your document.</Trans>
                   </p>
-                  <p className="mt-1 text-center text-xs text-muted-foreground/70">
+                  <p className="mt-1 text-center text-xs text-muted-foreground">
                     <Trans>You can add fields manually in the editor.</Trans>
                   </p>
                 </div>

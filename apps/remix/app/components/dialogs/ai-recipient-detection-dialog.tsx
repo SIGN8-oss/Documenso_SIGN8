@@ -189,7 +189,7 @@ export const AiRecipientDetectionDialog = ({
               <p className="mt-8 text-muted-foreground">{_(PROCESSING_MESSAGES[messageIndex])}</p>
 
               {progress && (
-                <p className="mt-2 text-xs text-muted-foreground/60">
+                <p className="mt-2 text-xs text-muted-foreground">
                   <Plural
                     value={progress.recipientsDetected}
                     one={
@@ -206,7 +206,7 @@ export const AiRecipientDetectionDialog = ({
                 </p>
               )}
 
-              <p className="mt-2 max-w-[40ch] text-center text-xs text-muted-foreground/60">
+              <p className="mt-2 max-w-[40ch] text-center text-xs text-muted-foreground">
                 <Trans>This can take a minute or two depending on the size of your document.</Trans>
               </p>
 
@@ -239,7 +239,7 @@ export const AiRecipientDetectionDialog = ({
                   <p className="mt-4 text-center text-sm text-muted-foreground">
                     <Trans>No recipients were detected in your document.</Trans>
                   </p>
-                  <p className="mt-1 text-center text-xs text-muted-foreground/70">
+                  <p className="mt-1 text-center text-xs text-muted-foreground">
                     <Trans>You can add recipients manually in the editor.</Trans>
                   </p>
                 </div>
@@ -271,7 +271,7 @@ export const AiRecipientDetectionDialog = ({
                           }
                           secondaryText={
                             <div className="text-xs text-muted-foreground">
-                              <p className="italic text-muted-foreground/70">
+                              <p className="italic text-muted-foreground">
                                 {recipient.email || _(msg`No email detected`)}
                               </p>
                               <p>{_(RECIPIENT_ROLES_DESCRIPTION[recipient.role].roleName)}</p>

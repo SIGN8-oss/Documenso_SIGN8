@@ -62,7 +62,7 @@ export function AvatarWithRecipient({ recipient, documentStatus }: AvatarWithRec
         }
       >
         <p>{recipient.email || recipient.name}</p>
-        <p className="text-xs text-muted-foreground/70">
+        <p className="text-xs text-muted-foreground">
           {_(RECIPIENT_ROLES_DESCRIPTION[recipient.role].roleName)}
         </p>
       </div>

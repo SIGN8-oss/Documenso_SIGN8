@@ -6,6 +6,7 @@ import { useBranding } from '../providers/branding';
 import type { TemplateConfirmationEmailProps } from '../template-components/template-confirmation-email';
 import { TemplateConfirmationEmail } from '../template-components/template-confirmation-email';
 import { TemplateFooter } from '../template-components/template-footer';
+import TemplateLogo from '../template-components/template-logo';
 
 export const ConfirmEmailTemplate = ({
   confirmationLink,
@@ -29,13 +30,9 @@ export const ConfirmEmailTemplate = ({
           <Container className="mx-auto mb-2 mt-8 max-w-xl rounded-lg border border-solid border-slate-200 p-4 backdrop-blur-sm">
             <Section>
               {branding.brandingEnabled && branding.brandingLogo ? (
-                <Img src={branding.brandingLogo} alt="Branding Logo" className="mb-4 h-6" />
+                <Img src={branding.brandingLogo} alt="Branding Logo" className="mb-4 h-10" />
               ) : (
-                <Img
-                  src={getAssetUrl('/static/logo.png')}
-                  alt="Documenso Logo"
-                  className="mb-4 h-6"
-                />
+                <TemplateLogo assetBaseUrl={assetBaseUrl} />
               )}
 
               <TemplateConfirmationEmail

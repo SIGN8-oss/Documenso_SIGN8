@@ -84,7 +84,7 @@ export const StackAvatarsWithTooltip = ({
               />
               <div>
                 <p className="text-sm text-muted-foreground">{recipient.email || recipient.name}</p>
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-xs text-muted-foreground">
                   {_(RECIPIENT_ROLES_DESCRIPTION[recipient.role].roleName)}
                 </p>
               </div>
@@ -108,7 +108,7 @@ export const StackAvatarsWithTooltip = ({
               />
               <div>
                 <p className="text-sm text-muted-foreground">{recipient.email || recipient.name}</p>
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-xs text-muted-foreground">
                   {_(RECIPIENT_ROLES_DESCRIPTION[recipient.role].roleName)}
                 </p>
               </div>

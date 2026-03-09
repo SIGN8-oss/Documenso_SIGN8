@@ -65,7 +65,7 @@ export default function EnvelopeEditorHeader() {
                   </Badge>
                 ) : (
                   <Badge variant="default">
-                    <Globe2Icon className="mr-2 h-4 w-4 text-green-500 dark:text-green-300" />
+                    <Globe2Icon className="mr-2 h-4 w-4 text-teal-500 dark:text-teal-300" />
                     <Trans>Public Template</Trans>
                   </Badge>
                 )}

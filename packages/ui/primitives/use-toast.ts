@@ -138,6 +138,16 @@ export type Toast = Omit<ToasterToast, 'id'>;
 function toast({ ...props }: Toast) {
   const id = genId();
 
+  if (
+    props.variant === 'destructive' &&
+    typeof window !== 'undefined' &&
+    (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__?.ENVIRONMENT ===
+      'PROD'
+  ) {
+    props.title = 'Something went wrong';
+    props.description = 'An unexpected error occurred. Please try again later.';
+  }
+
   const update = (props: ToasterToast) =>
     dispatch({
       type: 'UPDATE_TOAST',

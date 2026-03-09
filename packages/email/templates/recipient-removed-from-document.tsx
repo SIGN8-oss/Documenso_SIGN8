@@ -7,6 +7,7 @@ import { useBranding } from '../providers/branding';
 import type { TemplateDocumentCancelProps } from '../template-components/template-document-cancel';
 import TemplateDocumentImage from '../template-components/template-document-image';
 import { TemplateFooter } from '../template-components/template-footer';
+import TemplateLogo from '../template-components/template-logo';
 
 export type DocumentCancelEmailTemplateProps = Partial<TemplateDocumentCancelProps>;
 
@@ -34,19 +35,15 @@ export const RecipientRemovedFromDocumentTemplate = ({
           <Container className="mx-auto mb-2 mt-8 max-w-xl rounded-lg border border-solid border-slate-200 p-4 backdrop-blur-sm">
             <Section>
               {branding.brandingEnabled && branding.brandingLogo ? (
-                <Img src={branding.brandingLogo} alt="Branding Logo" className="mb-4 h-6" />
+                <Img src={branding.brandingLogo} alt="Branding Logo" className="mb-4 h-10" />
               ) : (
-                <Img
-                  src={getAssetUrl('/static/logo.png')}
-                  alt="Documenso Logo"
-                  className="mb-4 h-6"
-                />
+                <TemplateLogo assetBaseUrl={assetBaseUrl} />
               )}
 
               <TemplateDocumentImage className="mt-6" assetBaseUrl={assetBaseUrl} />
 
               <Section>
-                <Text className="text-primary mx-auto mb-0 max-w-[80%] text-center text-lg font-semibold">
+                <Text className="mx-auto mb-0 max-w-[80%] text-center text-lg font-semibold text-primary">
                   <Trans>
                     {inviterName} has removed you from the document
                     <br />"{documentName}"

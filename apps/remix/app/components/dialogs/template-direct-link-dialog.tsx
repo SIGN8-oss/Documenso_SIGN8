@@ -328,7 +328,7 @@ export const TemplateDirectLinkDialog = ({
                             <TableCell>
                               <div className="text-sm text-muted-foreground">
                                 <p>{row.name}</p>
-                                <p className="text-xs text-muted-foreground/70">{row.email}</p>
+                                <p className="text-xs text-muted-foreground">{row.email}</p>
                               </div>
                             </TableCell>
 

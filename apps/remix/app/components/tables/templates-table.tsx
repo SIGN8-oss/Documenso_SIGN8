@@ -124,7 +124,7 @@ export const TemplatesTable = ({
                 <ul className="space-y-0.5 divide-y text-muted-foreground [&>li]:p-4">
                   <li>
                     <h2 className="mb-2 flex flex-row items-center font-semibold">
-                      <Globe2Icon className="mr-2 h-5 w-5 text-green-500 dark:text-green-300" />
+                      <Globe2Icon className="mr-2 h-5 w-5 text-teal-500 dark:text-teal-300" />
                       <Trans>Public</Trans>
                     </h2>
 

@@ -13,7 +13,7 @@ import { PreventFlashOnWrongTheme, ThemeProvider, useTheme } from 'remix-themes'
 import { getOptionalSession } from '@documenso/auth/server/lib/utils/get-session';
 import { SessionProvider } from '@documenso/lib/client-only/providers/session';
 import { APP_I18N_OPTIONS, type SupportedLanguageCodes } from '@documenso/lib/constants/i18n';
-import { createPublicEnv } from '@documenso/lib/utils/env';
+import { createPublicEnv, isProductionEnvironment } from '@documenso/lib/utils/env';
 import { extractLocaleData } from '@documenso/lib/utils/i18n';
 import { TrpcProvider } from '@documenso/trpc/react';
 import { getOrganisationSession } from '@documenso/trpc/server/organisation-router/get-organisation-session';
@@ -103,9 +103,7 @@ export function LayoutContent({ children }: { children: React.ReactNode }) {
     <html translate="no" lang={lang} data-theme={theme} className={theme ?? ''}>
       <head>
         <meta charSet="utf-8" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="icon" href="/sign8_logo_icon.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="google" content="notranslate" />
@@ -148,14 +146,14 @@ export function LayoutContent({ children }: { children: React.ReactNode }) {
           </TooltipProvider>
         </SessionProvider>
 
-        <ScrollRestoration />
-        <Scripts />
-
         <script
           dangerouslySetInnerHTML={{
             __html: `window.__ENV__ = ${JSON.stringify(publicEnv)}`,
           }}
         />
+
+        <ScrollRestoration />
+        <Scripts />
       </body>
     </html>
   );
@@ -168,7 +166,7 @@ export default function App() {
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   const errorCode = isRouteErrorResponse(error) ? error.status : 500;
 
-  if (errorCode !== 404) {
+  if (errorCode !== 404 && !isProductionEnvironment()) {
     console.error('[RootErrorBoundary]', error);
   }
 

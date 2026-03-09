@@ -26,7 +26,7 @@ const TEMPLATE_TYPES: Record<TemplateTypes, TemplateTypeIcon> = {
   PUBLIC: {
     label: msg`Public`,
     icon: Globe2,
-    color: 'text-green-500 dark:text-green-300',
+    color: 'text-teal-500 dark:text-teal-300',
   },
 };
 

@@ -30,6 +30,7 @@ type MultiSelectComboboxProps<T = OptionValue> = {
   contentClassName?: string;
   loading?: boolean;
   inputPlaceholder?: MessageDescriptor;
+  ariaLabel?: string;
   onChange: (_values: T[]) => void;
   options: ComboBoxOption<T>[];
   selectedValues: T[];
@@ -50,6 +51,7 @@ export function MultiSelectCombobox<T = OptionValue>({
   className,
   contentClassName,
   inputPlaceholder,
+  ariaLabel,
   loading,
   onChange,
   options,
@@ -114,6 +116,7 @@ export function MultiSelectCombobox<T = OptionValue>({
             role="combobox"
             disabled={loading}
             aria-expanded={open}
+            aria-label={ariaLabel}
             className={cn('w-[200px] px-3', className)}
             data-testid={testId}
           >
@@ -146,7 +149,7 @@ export function MultiSelectCombobox<T = OptionValue>({
               className="flex h-4 w-4 items-center justify-center rounded-full bg-gray-300 dark:bg-neutral-700"
               onClick={() => onChange([])}
             >
-              <XIcon className="text-muted-foreground h-3.5 w-3.5" />
+              <XIcon className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
           </div>
         )}

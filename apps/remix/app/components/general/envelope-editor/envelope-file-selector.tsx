@@ -23,14 +23,14 @@ export const EnvelopeItemSelector = ({
       title={typeof primaryText === 'string' ? primaryText : undefined}
       className={`flex h-fit max-w-72 flex-shrink-0 cursor-pointer items-center space-x-3 rounded-lg border px-4 py-3 transition-colors ${
         isSelected
-          ? 'border-green-200 bg-green-50 text-green-900 dark:border-green-400/30 dark:bg-green-400/10 dark:text-green-400'
+          ? 'border-teal-200 bg-teal-50 text-teal-900 dark:border-teal-400/30 dark:bg-teal-400/10 dark:text-teal-400'
           : 'border-border bg-muted/50 hover:bg-muted/70'
       }`}
       {...buttonProps}
     >
       <div
         className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium ${
-          isSelected ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-600'
+          isSelected ? 'bg-teal-100 text-teal-600' : 'bg-gray-200 text-gray-600'
         }`}
       >
         {number}
@@ -41,7 +41,7 @@ export const EnvelopeItemSelector = ({
       </div>
       <div
         className={cn('h-2 w-2 flex-shrink-0 rounded-full', {
-          'bg-green-500': isSelected,
+          'bg-teal-500': isSelected,
         })}
       ></div>
     </button>

@@ -1,4 +1,5 @@
 @import '@documenso/ui/styles/theme.css';
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 /* Inter Variable Fonts */
 @font-face {
@@ -64,8 +65,9 @@
 
 @layer base {
   :root {
-    --font-sans: 'Inter';
+    --font-sans: 'Roboto';
     --font-signature: 'Caveat';
     --font-noto: 'Noto Sans', 'Noto Sans Korean', 'Noto Sans Japanese', 'Noto Sans Chinese';
   }
 }
+

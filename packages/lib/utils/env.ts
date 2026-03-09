@@ -23,4 +23,10 @@ export const env = <K extends EnvKey>(variable: K): EnvValue<K> => {
 };
 
 export const createPublicEnv = () =>
-  Object.fromEntries(Object.entries(process.env).filter(([key]) => key.startsWith('NEXT_PUBLIC_')));
+  Object.fromEntries(
+    Object.entries(process.env).filter(
+      ([key]) => key.startsWith('NEXT_PUBLIC_') || key === 'ENVIRONMENT',
+    ),
+  );
+
+export const isProductionEnvironment = () => env('ENVIRONMENT') === 'PROD';

@@ -101,7 +101,7 @@ export const DocumentPageViewRecentActivity = ({
 
             {documentAuditLogs.length === 0 && (
               <div className="flex items-center justify-center py-4">
-                <p className="text-sm text-muted-foreground/70">
+                <p className="text-sm text-muted-foreground">
                   <Trans>No recent activity</Trans>
                 </p>
               </div>

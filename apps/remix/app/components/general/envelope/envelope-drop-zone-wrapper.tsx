@@ -222,7 +222,7 @@ export const EnvelopeDropZoneWrapper = ({
 
   return (
     <div {...getRootProps()} className={cn('relative min-h-screen', className)}>
-      <input {...getInputProps()} />
+      <input {...getInputProps()} aria-hidden="true" />
       {children}
 
       {isDragActive && (

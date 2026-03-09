@@ -29,7 +29,7 @@ const dateFormat: DateTimeFormatOptions = {
 
 const getAuditLogIndicatorColor = (type: string) =>
   match(type)
-    .with(DOCUMENT_AUDIT_LOG_TYPE.DOCUMENT_RECIPIENT_COMPLETED, () => 'bg-green-500')
+    .with(DOCUMENT_AUDIT_LOG_TYPE.DOCUMENT_RECIPIENT_COMPLETED, () => 'bg-teal-500')
     .with(DOCUMENT_AUDIT_LOG_TYPE.DOCUMENT_RECIPIENT_REJECTED, () => 'bg-red-500')
     .with(DOCUMENT_AUDIT_LOG_TYPE.DOCUMENT_SENT, () => 'bg-orange-500')
     .with(
@@ -117,7 +117,7 @@ export const InternalAuditLogTable = ({ logs }: AuditLogDataTableProps) => {
               {/* Details Section - Two column layout */}
               <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs print:text-[6pt]">
                 <div>
-                  <div className="font-medium uppercase tracking-wide text-muted-foreground/70">
+                  <div className="font-medium uppercase tracking-wide text-muted-foreground">
                     {_(msg`User`)}
                   </div>
 
@@ -125,7 +125,7 @@ export const InternalAuditLogTable = ({ logs }: AuditLogDataTableProps) => {
                 </div>
 
                 <div className="text-right">
-                  <div className="font-medium uppercase tracking-wide text-muted-foreground/70">
+                  <div className="font-medium uppercase tracking-wide text-muted-foreground">
                     {_(msg`IP Address`)}
                   </div>
 
@@ -133,7 +133,7 @@ export const InternalAuditLogTable = ({ logs }: AuditLogDataTableProps) => {
                 </div>
 
                 <div className="col-span-2">
-                  <div className="font-medium uppercase tracking-wide text-muted-foreground/70">
+                  <div className="font-medium uppercase tracking-wide text-muted-foreground">
                     {_(msg`User Agent`)}
                   </div>
 

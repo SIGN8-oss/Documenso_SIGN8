@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { Trans } from '@lingui/react/macro';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 
@@ -18,6 +20,7 @@ const isPeriodSelectorValue = (value: unknown): value is PeriodSelectorValue => 
 };
 
 export const PeriodSelector = () => {
+  const { _ } = useLingui();
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
 
@@ -47,7 +50,10 @@ export const PeriodSelector = () => {
 
   return (
     <Select defaultValue={period} onValueChange={onPeriodChange}>
-      <SelectTrigger className="text-muted-foreground max-w-[200px]">
+      <SelectTrigger
+        className="max-w-[200px] text-muted-foreground"
+        aria-label={_(msg`Filter by period`)}
+      >
         <SelectValue />
       </SelectTrigger>
 

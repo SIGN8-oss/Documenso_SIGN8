@@ -12,6 +12,47 @@ import { dynamicActivate } from '@documenso/lib/utils/i18n';
 
 import './utils/polyfills/promise-with-resolvers';
 
+const CONSOLE_METHODS_TO_SUPPRESS: Array<keyof Console> = [
+  'error',
+  'warn',
+  'log',
+  'info',
+  'debug',
+  'trace',
+  'table',
+  'group',
+  'groupCollapsed',
+  'groupEnd',
+];
+
+const suppressFrontendConsoleInProd = () => {
+  if (typeof window === 'undefined' || window.__ENV__?.ENVIRONMENT !== 'PROD') {
+    return;
+  }
+
+  const noop = () => undefined;
+
+  CONSOLE_METHODS_TO_SUPPRESS.forEach((method) => {
+    if (typeof console[method] === 'function') {
+      Object.defineProperty(console, method, {
+        configurable: true,
+        writable: true,
+        value: noop,
+      });
+    }
+  });
+
+  window.onerror = () => true;
+  window.addEventListener('error', (event) => {
+    event.preventDefault();
+  });
+  window.addEventListener('unhandledrejection', (event) => {
+    event.preventDefault();
+  });
+};
+
+suppressFrontendConsoleInProd();
+
 function PosthogInit() {
   const postHogConfig = extractPostHogConfig();
 
@@ -28,6 +69,8 @@ function PosthogInit() {
 }
 
 async function main() {
+  suppressFrontendConsoleInProd();
+
   const locale = detect(fromHtmlTag('lang')) || 'en';
 
   await dynamicActivate(locale);

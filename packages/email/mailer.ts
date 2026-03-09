@@ -94,6 +94,9 @@ const getTransport = (): Transporter => {
     port: Number(env('NEXT_PRIVATE_SMTP_PORT')) || 587,
     secure: env('NEXT_PRIVATE_SMTP_SECURE') === 'true',
     ignoreTLS: env('NEXT_PRIVATE_SMTP_UNSAFE_IGNORE_TLS') === 'true',
+    tls: {
+      rejectUnauthorized: env('NEXT_PRIVATE_SMTP_ALLOW_SELFSIGNED') !== 'true',
+    },
     auth: env('NEXT_PRIVATE_SMTP_USERNAME')
       ? {
           user: env('NEXT_PRIVATE_SMTP_USERNAME'),

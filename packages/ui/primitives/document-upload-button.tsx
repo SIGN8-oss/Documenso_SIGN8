@@ -51,7 +51,7 @@ export const DocumentUploadButton = ({
 
   const isPersonalLayoutMode = isPersonalLayout(organisations);
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, open } = useDropzone({
     accept: {
       'application/pdf': ['.pdf'],
     },
@@ -65,6 +65,8 @@ export const DocumentUploadButton = ({
     },
     onDropRejected,
     maxSize: megabytesToBytes(APP_DOCUMENT_UPLOAD_SIZE_LIMIT),
+    noClick: true,
+    noKeyboard: true,
   });
 
   const heading = {
@@ -79,7 +81,7 @@ export const DocumentUploadButton = ({
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button className="hover:bg-warning/80 bg-warning" asChild>
+            <Button className="bg-warning hover:bg-warning/80" asChild>
               <Link
                 to={
                   isPersonalLayoutMode
@@ -100,12 +102,15 @@ export const DocumentUploadButton = ({
   }
 
   return (
-    <Button loading={loading} aria-disabled={disabled} {...getRootProps()} {...props}>
-      <div className="flex items-center gap-2">
-        <input data-testid="document-upload-input" {...getInputProps()} />
-        {!loading && <Upload className="h-4 w-4" />}
-        {disabled ? _(disabledMessage) : _(heading[type])}
-      </div>
-    </Button>
+    <div {...getRootProps()}>
+      <input data-testid="document-upload-input" {...getInputProps()} aria-hidden="true" />
+
+      <Button loading={loading} aria-disabled={disabled} onClick={open} {...props}>
+        <div className="flex items-center gap-2">
+          {!loading && <Upload className="h-4 w-4" />}
+          {disabled ? _(disabledMessage) : _(heading[type])}
+        </div>
+      </Button>
+    </div>
   );
 };

@@ -36,9 +36,9 @@ export const RECIPIENT_COLOR_STYLES = {
 
   green: {
     base: 'ring-recipient-green hover:bg-recipient-green/30',
-    baseRing: 'rgba(122, 195, 85, 1)',
-    baseRingHover: 'rgba(122, 195, 85, 0.3)',
-    baseTextHover: 'rgba(122, 195, 85, 1)',
+    baseRing: 'rgba(187, 209, 53, 1)',
+    baseRingHover: 'rgba(187, 209, 53, 0.3)',
+    baseTextHover: 'rgba(187, 209, 53, 1)',
     fieldButton: 'hover:border-recipient-green hover:bg-recipient-green/30 ',
     fieldItem: 'group/field-item rounded-[2px]',
     fieldItemInitials: 'group-hover/field-item:bg-recipient-green',

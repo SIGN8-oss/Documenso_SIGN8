@@ -102,7 +102,7 @@ export const DocumentPageViewRecipients = ({
               avatarFallback={recipient.email.slice(0, 1).toUpperCase()}
               primaryText={<p className="text-sm text-muted-foreground">{recipient.email}</p>}
               secondaryText={
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-xs text-muted-foreground">
                   {_(RECIPIENT_ROLES_DESCRIPTION[recipient.role].roleName)}
                 </p>
               }

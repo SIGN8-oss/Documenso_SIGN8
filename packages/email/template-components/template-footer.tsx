@@ -16,8 +16,8 @@ export const TemplateFooter = ({ isDocument = true }: TemplateFooterProps) => {
         <Text className="my-4 text-base text-slate-400">
           <Trans>
             This document was sent using{' '}
-            <Link className="text-[#7AC455]" href="https://documen.so/mail-footer">
-              Documenso
+            <Link className="text-[#1e6568]" href="https://www.sign8.eu">
+              Sign8
             </Link>
             .
           </Trans>
@@ -39,9 +39,10 @@ export const TemplateFooter = ({ isDocument = true }: TemplateFooterProps) => {
 
       {!branding.brandingEnabled && (
         <Text className="my-8 text-sm text-slate-400">
-          Documenso, Inc.
+          SIGN8 GmbH • Fürstenrieder Str. 5 • 80687 München
           <br />
-          2261 Market Street, #5211, San Francisco, CA 94114, USA
+          +49 (0)89 2153 7472 000 • info@sign8.eu • www.SIGN8.eu
+          <br />© {new Date().getFullYear()} SIGN8
         </Text>
       )}
     </Section>

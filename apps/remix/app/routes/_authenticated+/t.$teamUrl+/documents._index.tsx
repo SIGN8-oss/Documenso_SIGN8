@@ -16,9 +16,9 @@ import { ExtendedDocumentStatus } from '@documenso/prisma/types/extended-documen
 import { trpc } from '@documenso/trpc/react';
 import type { TFindDocumentsInternalResponse } from '@documenso/trpc/server/document-router/find-documents-internal.types';
 import { ZFindDocumentsInternalRequestSchema } from '@documenso/trpc/server/document-router/find-documents-internal.types';
+import { cn } from '@documenso/ui/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@documenso/ui/primitives/avatar';
 import type { RowSelectionState } from '@documenso/ui/primitives/data-table';
-import { Tabs, TabsList, TabsTrigger } from '@documenso/ui/primitives/tabs';
 
 import { DocumentMoveToFolderDialog } from '~/components/dialogs/document-move-to-folder-dialog';
 import { EnvelopesBulkDeleteDialog } from '~/components/dialogs/envelopes-bulk-delete-dialog';
@@ -145,8 +145,12 @@ export default function DocumentsPage() {
           </div>
 
           <div className="-m-1 flex flex-wrap gap-x-4 gap-y-6 overflow-hidden p-1">
-            <Tabs value={findDocumentSearchParams.status || 'ALL'} className="overflow-x-auto">
-              <TabsList>
+            <nav aria-label="Document status" className="overflow-x-auto">
+              <div
+                role="tablist"
+                aria-orientation="horizontal"
+                className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground"
+              >
                 {[
                   ExtendedDocumentStatus.INBOX,
                   ExtendedDocumentStatus.PENDING,
@@ -161,24 +165,34 @@ export default function DocumentsPage() {
 
                     return true;
                   })
-                  .map((value) => (
-                    <TabsTrigger
-                      key={value}
-                      className="min-w-[60px] hover:text-foreground"
-                      value={value}
-                      asChild
-                    >
-                      <Link to={getTabHref(value)} preventScrollReset>
+                  .map((value) => {
+                    const isActive = (findDocumentSearchParams.status || 'ALL') === value;
+
+                    return (
+                      <Link
+                        key={value}
+                        role="tab"
+                        aria-selected={isActive}
+                        aria-current={isActive ? 'page' : undefined}
+                        to={getTabHref(value)}
+                        preventScrollReset
+                        className={cn(
+                          'inline-flex min-w-[60px] items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                          isActive
+                            ? 'bg-background text-foreground shadow-sm'
+                            : 'text-foreground/70',
+                        )}
+                      >
                         <DocumentStatus status={value} />
 
                         {value !== ExtendedDocumentStatus.ALL && (
                           <span className="ml-1 inline-block opacity-50">{stats[value]}</span>
                         )}
                       </Link>
-                    </TabsTrigger>
-                  ))}
-              </TabsList>
-            </Tabs>
+                    );
+                  })}
+              </div>
+            </nav>
 
             {team && <DocumentsTableSenderFilter teamId={team.id} />}
 

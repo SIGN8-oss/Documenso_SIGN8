@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { Trans } from '@lingui/react/macro';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 
@@ -11,6 +12,7 @@ type DocumentsTableSenderFilterProps = {
 };
 
 export const DocumentsTableSenderFilter = ({ teamId }: DocumentsTableSenderFilterProps) => {
+  const { _ } = useLingui();
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -48,10 +50,11 @@ export const DocumentsTableSenderFilter = ({ teamId }: DocumentsTableSenderFilte
 
   return (
     <MultiSelectCombobox
+      ariaLabel={_(msg`Filter by sender`)}
       emptySelectionPlaceholder={
-        <p className="text-muted-foreground font-normal">
+        <p className="font-normal text-muted-foreground">
           <Trans>
-            <span className="text-muted-foreground/70">Sender:</span> All
+            <span className="text-muted-foreground">Sender:</span> All
           </Trans>
         </p>
       }
