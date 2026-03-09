@@ -20,7 +20,16 @@ const config = {
     preserveModules: true,
     preserveModulesRoot: '.',
   },
-  external: [/node_modules/],
+  external: [
+    (id) => {
+      // Bundle @noble packages to avoid version mismatches at runtime.
+      if (/@noble\//.test(id)) {
+        return false;
+      }
+
+      return /node_modules/.test(id);
+    },
+  ],
   plugins: [
     typescript({
       noEmitOnError: true,
@@ -37,6 +46,7 @@ const config = {
         '@documenso/lib/*',
         '@documenso/trpc/*',
         '@documenso/email/*',
+        '@noble/*',
       ],
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     }),
