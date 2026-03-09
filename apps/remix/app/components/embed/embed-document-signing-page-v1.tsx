@@ -262,6 +262,10 @@ export const EmbedSignDocumentV1ClientPage = ({
           created: new Date(),
           signatureImageAsBase64: signature?.startsWith('data:') ? signature : null,
           typedSignature: signature?.startsWith('data:') ? null : signature,
+          signatureLevel: null,
+          sign8SignatureData: null,
+          sign8PendingSignatureId: null,
+          sign8CredentialId: null,
         }}
       />
     );

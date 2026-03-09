@@ -32,6 +32,7 @@ import { EnvelopeSignerHeader } from '../envelope-signing/envelope-signer-header
 import { DocumentSigningMobileWidget } from './document-signing-mobile-widget';
 import { DocumentSigningRejectDialog } from './document-signing-reject-dialog';
 import { useRequiredEnvelopeSigningContext } from './envelope-signing-provider';
+import { Sign8CompletionOverlay } from './sign8-completion-overlay';
 
 const EnvelopeSignerPageRenderer = lazy(
   async () => import('~/components/general/envelope-signing/envelope-signer-page-renderer'),
@@ -48,6 +49,7 @@ export const DocumentSigningPageViewV2 = () => {
     recipientFieldsRemaining,
     requiredRecipientFields,
     selectedAssistantRecipientFields,
+    sign8FlowState,
   } = useRequiredEnvelopeSigningContext();
 
   const {
@@ -233,6 +235,8 @@ export const DocumentSigningPageViewV2 = () => {
                   key={currentEnvelopeItem.id}
                   customPageRenderer={EnvelopeSignerPageRenderer}
                 />
+              ) : sign8FlowState.step !== 'idle' ? (
+                <Sign8CompletionOverlay state={sign8FlowState} />
               ) : (
                 <div className="flex flex-col items-center justify-center py-32">
                   <p className="text-sm text-foreground">

@@ -3,13 +3,14 @@ import { createElement } from 'react';
 import { msg } from '@lingui/core/macro';
 import { EnvelopeType } from '@prisma/client';
 
-import { mailer } from '@documenso/email/mailer';
+import { getMailer } from '@documenso/email/mailer-factory';
 import { DocumentRecipientSignedEmailTemplate } from '@documenso/email/templates/document-recipient-signed';
 import { prisma } from '@documenso/prisma';
 
 import { getI18nInstance } from '../../../client-only/providers/i18n-server';
 import { NEXT_PUBLIC_WEBAPP_URL } from '../../../constants/app';
 import { getEmailContext } from '../../../server-only/email/get-email-context';
+import { getEmailTemplate } from '../../../server-only/email/get-email-template';
 import { extractDerivedDocumentEmailSettings } from '../../../types/document-email';
 import { unsafeBuildEnvelopeIdQuery } from '../../../utils/envelope';
 import { isRecipientEmailValidForSending } from '../../../utils/recipients';
@@ -85,7 +86,7 @@ export const run = async ({
     return;
   }
 
-  const { branding, emailLanguage, senderEmail } = await getEmailContext({
+  const { branding, emailLanguage, senderEmail, organisationId } = await getEmailContext({
     emailType: 'INTERNAL',
     source: {
       type: 'team',
@@ -94,9 +95,25 @@ export const run = async ({
     meta: envelope.documentMeta,
   });
 
+  const mailer = await getMailer({ organisationId });
+
   const assetBaseUrl = NEXT_PUBLIC_WEBAPP_URL() || 'http://localhost:3000';
 
   const i18n = await getI18nInstance(emailLanguage);
+
+  // Get organisation-level template
+  const orgTemplate = await getEmailTemplate({
+    type: 'RECIPIENT_SIGNED',
+    organisationId,
+    variables: {
+      'signer.name': recipientName,
+      'signer.email': recipientEmail,
+      'document.name': envelope.title,
+      'owner.name': owner.name || '',
+      'owner.email': owner.email,
+    },
+    defaultSubject: i18n._(msg`${recipientReference} has signed "${envelope.title}"`),
+  });
 
   const template = createElement(DocumentRecipientSignedEmailTemplate, {
     documentName: envelope.title,
@@ -121,7 +138,7 @@ export const run = async ({
         address: owner.email,
       },
       from: senderEmail,
-      subject: i18n._(msg`${recipientReference} has signed "${envelope.title}"`),
+      subject: orgTemplate.subject,
       html,
       text,
     });

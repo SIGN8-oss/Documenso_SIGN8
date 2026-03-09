@@ -110,8 +110,13 @@ const createFieldSignature = (
           throw new Error('Skia image not found');
         }
 
+        // Extract raw base64 data from data URL and convert to Buffer
+        // Data URL format: data:image/png;base64,<base64data>
+        const base64Data = signature.signatureImageAsBase64.replace(/^data:image\/\w+;base64,/, '');
+        const imageBuffer = Buffer.from(base64Data, 'base64');
+
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        const img = new SkiaImage(signature?.signatureImageAsBase64) as unknown as HTMLImageElement;
+        const img = new SkiaImage(imageBuffer) as unknown as HTMLImageElement;
 
         const image = new Konva.Image({
           image: img,

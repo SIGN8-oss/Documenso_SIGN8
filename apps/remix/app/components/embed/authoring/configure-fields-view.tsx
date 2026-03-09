@@ -111,6 +111,7 @@ export const ConfigureFieldsView = ({
       email: signer.email || '',
       role: signer.role,
       signingOrder: signer.signingOrder || null,
+      signatureLevel: 'SES',
       documentId: null,
       templateId: null,
       token: '',

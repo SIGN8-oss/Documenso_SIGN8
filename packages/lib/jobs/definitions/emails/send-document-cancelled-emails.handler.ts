@@ -3,7 +3,7 @@ import { createElement } from 'react';
 import { msg } from '@lingui/core/macro';
 import { EnvelopeType, ReadStatus, SendStatus, SigningStatus } from '@prisma/client';
 
-import { mailer } from '@documenso/email/mailer';
+import { getMailer } from '@documenso/email/mailer-factory';
 import DocumentCancelTemplate from '@documenso/email/templates/document-cancel';
 import { isRecipientEmailValidForSending } from '@documenso/lib/utils/recipients';
 import { prisma } from '@documenso/prisma';
@@ -11,6 +11,7 @@ import { prisma } from '@documenso/prisma';
 import { getI18nInstance } from '../../../client-only/providers/i18n-server';
 import { NEXT_PUBLIC_WEBAPP_URL } from '../../../constants/app';
 import { getEmailContext } from '../../../server-only/email/get-email-context';
+import { getEmailTemplate } from '../../../server-only/email/get-email-template';
 import { extractDerivedDocumentEmailSettings } from '../../../types/document-email';
 import { unsafeBuildEnvelopeIdQuery } from '../../../utils/envelope';
 import { renderEmailWithI18N } from '../../../utils/render-email-with-i18n';
@@ -54,14 +55,17 @@ export const run = async ({
     },
   });
 
-  const { branding, emailLanguage, senderEmail, replyToEmail } = await getEmailContext({
-    emailType: 'RECIPIENT',
-    source: {
-      type: 'team',
-      teamId: envelope.teamId,
-    },
-    meta: envelope.documentMeta,
-  });
+  const { branding, emailLanguage, senderEmail, replyToEmail, organisationId } =
+    await getEmailContext({
+      emailType: 'RECIPIENT',
+      source: {
+        type: 'team',
+        teamId: envelope.teamId,
+      },
+      meta: envelope.documentMeta,
+    });
+
+  const mailer = await getMailer({ organisationId });
 
   const { documentMeta, user: documentOwner } = envelope;
 
@@ -85,6 +89,19 @@ export const run = async ({
   await io.runTask('send-cancellation-emails', async () => {
     await Promise.all(
       recipientsToNotify.map(async (recipient) => {
+        // Get organisation-level template
+        const orgTemplate = await getEmailTemplate({
+          type: 'DOCUMENT_CANCELLED',
+          organisationId,
+          variables: {
+            'signer.name': recipient.name,
+            'signer.email': recipient.email,
+            'document.name': envelope.title,
+            'cancellation.reason': cancellationReason || 'The document has been cancelled.',
+          },
+          defaultSubject: i18n._(msg`Document "${envelope.title}" Cancelled`),
+        });
+
         const template = createElement(DocumentCancelTemplate, {
           documentName: envelope.title,
           inviterName: documentOwner.name || undefined,
@@ -109,7 +126,7 @@ export const run = async ({
           },
           from: senderEmail,
           replyTo: replyToEmail,
-          subject: i18n._(msg`Document "${envelope.title}" Cancelled`),
+          subject: orgTemplate.subject,
           html,
           text,
         });

@@ -47,17 +47,20 @@ export default function OrganisationSettingsBrandingPage() {
     try {
       const { brandingEnabled, brandingLogo, brandingUrl, brandingCompanyDetails } = data;
 
-      let uploadedBrandingLogo: string | undefined = '';
+      let uploadedBrandingLogo: string | undefined = undefined;
 
       if (brandingLogo) {
         uploadedBrandingLogo = JSON.stringify(await putFile(brandingLogo));
+      } else if (brandingLogo === null) {
+        // User explicitly removed the logo
+        uploadedBrandingLogo = '';
       }
 
       await updateOrganisationSettings({
         organisationId: organisation.id,
         data: {
           brandingEnabled: brandingEnabled ?? undefined,
-          brandingLogo: uploadedBrandingLogo,
+          ...(uploadedBrandingLogo !== undefined && { brandingLogo: uploadedBrandingLogo }),
           brandingUrl,
           brandingCompanyDetails,
         },

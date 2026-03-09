@@ -64,6 +64,13 @@ export type DocumentSigningCompleteDialogProps = {
   buttonSize?: 'sm' | 'lg';
   position?: 'start' | 'end' | 'center';
   disableNameInput?: boolean;
+  requiresSign8?: boolean;
+  sign8SignatureData?: {
+    signature: string;
+    credentialId: string;
+    pendingSignatureId: string;
+  } | null;
+  onSign8Required?: () => void;
 };
 
 const ZNextSignerFormSchema = z.object({
@@ -95,6 +102,9 @@ export const DocumentSigningCompleteDialog = ({
   buttonSize = 'lg',
   position,
   disableNameInput = false,
+  requiresSign8 = false,
+  sign8SignatureData = null,
+  onSign8Required,
 }: DocumentSigningCompleteDialogProps) => {
   const { t } = useLingui();
 
@@ -157,6 +167,12 @@ export const DocumentSigningCompleteDialog = ({
         }
 
         recipientOverridePayload = recipientForm.getValues();
+      }
+
+      // Check if Sign8 is required (QES or AES) and Sign8 has not been completed
+      if (requiresSign8 && !sign8SignatureData) {
+        onSign8Required?.();
+        return;
       }
 
       // Check if 2FA is required

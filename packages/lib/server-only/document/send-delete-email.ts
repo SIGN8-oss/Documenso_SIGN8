@@ -2,7 +2,7 @@ import { createElement } from 'react';
 
 import { msg } from '@lingui/core/macro';
 
-import { mailer } from '@documenso/email/mailer';
+import { getMailer } from '@documenso/email/mailer-factory';
 import { DocumentSuperDeleteEmailTemplate } from '@documenso/email/templates/document-super-delete';
 import { prisma } from '@documenso/prisma';
 
@@ -50,7 +50,7 @@ export const sendDeleteEmail = async ({ envelopeId, reason }: SendDeleteEmailOpt
     return;
   }
 
-  const { branding, emailLanguage, senderEmail } = await getEmailContext({
+  const { branding, emailLanguage, senderEmail, organisationId } = await getEmailContext({
     emailType: 'INTERNAL',
     source: {
       type: 'team',
@@ -58,6 +58,8 @@ export const sendDeleteEmail = async ({ envelopeId, reason }: SendDeleteEmailOpt
     },
     meta: envelope.documentMeta,
   });
+
+  const mailer = await getMailer({ organisationId });
 
   const { email, name } = envelope.user;
 

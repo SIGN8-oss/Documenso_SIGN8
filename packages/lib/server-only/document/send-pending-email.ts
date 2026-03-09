@@ -3,7 +3,7 @@ import { createElement } from 'react';
 import { msg } from '@lingui/core/macro';
 import { EnvelopeType } from '@prisma/client';
 
-import { mailer } from '@documenso/email/mailer';
+import { getMailer } from '@documenso/email/mailer-factory';
 import { DocumentPendingEmailTemplate } from '@documenso/email/templates/document-pending';
 import { prisma } from '@documenso/prisma';
 
@@ -15,6 +15,7 @@ import { unsafeBuildEnvelopeIdQuery } from '../../utils/envelope';
 import { isRecipientEmailValidForSending } from '../../utils/recipients';
 import { renderEmailWithI18N } from '../../utils/render-email-with-i18n';
 import { getEmailContext } from '../email/get-email-context';
+import { getEmailTemplate } from '../email/get-email-template';
 
 export interface SendPendingEmailOptions {
   id: EnvelopeIdOptions;
@@ -49,14 +50,17 @@ export const sendPendingEmail = async ({ id, recipientId }: SendPendingEmailOpti
     throw new Error('Document has no recipients');
   }
 
-  const { branding, emailLanguage, senderEmail, replyToEmail } = await getEmailContext({
-    emailType: 'RECIPIENT',
-    source: {
-      type: 'team',
-      teamId: envelope.teamId,
-    },
-    meta: envelope.documentMeta,
-  });
+  const { branding, emailLanguage, senderEmail, replyToEmail, organisationId } =
+    await getEmailContext({
+      emailType: 'RECIPIENT',
+      source: {
+        type: 'team',
+        teamId: envelope.teamId,
+      },
+      meta: envelope.documentMeta,
+    });
+
+  const mailer = await getMailer({ organisationId });
 
   const isDocumentPendingEmailEnabled = extractDerivedDocumentEmailSettings(
     envelope.documentMeta,
@@ -93,6 +97,18 @@ export const sendPendingEmail = async ({ id, recipientId }: SendPendingEmailOpti
 
   const i18n = await getI18nInstance(emailLanguage);
 
+  // Get organisation-level template
+  const orgTemplate = await getEmailTemplate({
+    type: 'DOCUMENT_PENDING',
+    organisationId,
+    variables: {
+      'signer.name': name,
+      'signer.email': email,
+      'document.name': envelope.title,
+    },
+    defaultSubject: i18n._(msg`Waiting for others to complete signing.`),
+  });
+
   await mailer.sendMail({
     to: {
       address: email,
@@ -100,7 +116,7 @@ export const sendPendingEmail = async ({ id, recipientId }: SendPendingEmailOpti
     },
     from: senderEmail,
     replyTo: replyToEmail,
-    subject: i18n._(msg`Waiting for others to complete signing.`),
+    subject: orgTemplate.subject,
     html,
     text,
   });

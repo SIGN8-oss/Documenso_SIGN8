@@ -1,38 +1,49 @@
-import { PDFDocument } from '@cantoo/pdf-lib';
-import { PDF } from '@libpdf/core';
+import {
+  PDFDocument,
+  RotationTypes,
+  popGraphicsState,
+  pushGraphicsState,
+  radiansToDegrees,
+  rotateDegrees,
+  translate,
+} from '@cantoo/pdf-lib';
 import type { DocumentData, Envelope, EnvelopeItem, Field } from '@prisma/client';
 import {
   DocumentStatus,
   EnvelopeType,
+  FieldType,
   RecipientRole,
+  SignatureLevel,
   SigningStatus,
   WebhookTriggerEvents,
 } from '@prisma/client';
 import { nanoid } from 'nanoid';
 import path from 'node:path';
 import { groupBy } from 'remeda';
+import { match } from 'ts-pattern';
 
-import { addRejectionStampToPdf } from '@documenso/lib/server-only/pdf/add-rejection-stamp-to-pdf';
-import { generateAuditLogPdf } from '@documenso/lib/server-only/pdf/generate-audit-log-pdf';
 import { generateCertificatePdf } from '@documenso/lib/server-only/pdf/generate-certificate-pdf';
-import { getLastPageDimensions } from '@documenso/lib/server-only/pdf/get-page-size';
 import { prisma } from '@documenso/prisma';
-import { signPdf } from '@documenso/signing';
+import { signPdf, signPdfIncremental } from '@documenso/signing';
+import { extractQESSignatures } from '@documenso/signing/helpers/embed-external-signature';
 
 import { NEXT_PRIVATE_USE_PLAYWRIGHT_PDF } from '../../../constants/app';
+import { PDF_SIZE_A4_72PPI } from '../../../constants/pdf';
 import { AppError, AppErrorCode } from '../../../errors/app-error';
 import { sendCompletedEmail } from '../../../server-only/document/send-completed-email';
-import { getAuditLogsPdf } from '../../../server-only/htmltopdf/get-audit-logs-pdf';
 import { getCertificatePdf } from '../../../server-only/htmltopdf/get-certificate-pdf';
+import { addRejectionStampToPdf } from '../../../server-only/pdf/add-rejection-stamp-to-pdf';
+import { flattenAnnotations } from '../../../server-only/pdf/flatten-annotations';
+import { flattenForm } from '../../../server-only/pdf/flatten-form';
+import { getPageSize } from '../../../server-only/pdf/get-page-size';
 import { insertFieldInPDFV1 } from '../../../server-only/pdf/insert-field-in-pdf-v1';
 import { insertFieldInPDFV2 } from '../../../server-only/pdf/insert-field-in-pdf-v2';
 import { legacy_insertFieldInPDF } from '../../../server-only/pdf/legacy-insert-field-in-pdf';
+import { normalizeSignatureAppearances } from '../../../server-only/pdf/normalize-signature-appearances';
+import { renderAndAddFieldsIncremental } from '../../../server-only/pdf/render-fields-incremental';
 import { getTeamSettings } from '../../../server-only/team/get-team-settings';
 import { triggerWebhook } from '../../../server-only/webhooks/trigger/trigger-webhook';
-import {
-  DOCUMENT_AUDIT_LOG_TYPE,
-  type TDocumentAuditLog,
-} from '../../../types/document-audit-logs';
+import { DOCUMENT_AUDIT_LOG_TYPE } from '../../../types/document-audit-logs';
 import {
   ZWebhookDocumentSchema,
   mapEnvelopeToWebhookDocumentPayload,
@@ -172,38 +183,147 @@ export const run = async ({
       });
     }
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const envelopeCompletedAuditLog = createDocumentAuditLogData({
-      type: DOCUMENT_AUDIT_LOG_TYPE.DOCUMENT_COMPLETED,
-      envelopeId: envelope.id,
-      requestMetadata,
-      user: null,
-      data: {
-        transactionId: nanoid(),
-        ...(isRejected ? { isRejected: true, rejectionReason: rejectionReason } : {}),
-      },
-    });
+    let certificateDoc: PDFDocument | null = null;
 
-    const finalEnvelopeStatus = isRejected ? DocumentStatus.REJECTED : DocumentStatus.COMPLETED;
+    if (settings.includeSigningCertificate) {
+      const certificatePayload = {
+        envelope,
+        recipients: envelope.recipients, // Need to use the recipients from envelope which contains ALL recipients.
+        fields,
+        language: envelope.documentMeta.language,
+        envelopeOwner: {
+          email: envelope.user.email,
+          name: envelope.user.name || '',
+        },
+        envelopeItems: envelopeItems.map((item) => item.title),
+        pageWidth: PDF_SIZE_A4_72PPI.width,
+        pageHeight: PDF_SIZE_A4_72PPI.height,
+      };
 
-    // Pre-fetch all PDF data so we can read dimensions and pass it
-    // to decorateAndSignPdf without fetching again.
-    const prefetchedItems = await Promise.all(
-      envelopeItems.map(async (envelopeItem) => {
-        const pdfData = await getFileServerSide(envelopeItem.documentData);
+      // Use Playwright-based PDF generation if enabled, otherwise use Konva-based generation.
+      // This is a temporary toggle while we validate the Konva-based approach.
+      const usePlaywrightPdf = NEXT_PRIVATE_USE_PLAYWRIGHT_PDF();
 
-        return { envelopeItem, pdfData };
-      }),
-    );
-
-    const usePlaywrightPdf = NEXT_PRIVATE_USE_PLAYWRIGHT_PDF();
-
-    const needsCertificate = settings.includeSigningCertificate;
-    const needsAuditLog = settings.includeAuditLog;
+      certificateDoc = usePlaywrightPdf
+        ? await getCertificatePdf({
+            documentId,
+            language: envelope.documentMeta.language,
+          }).then(async (buffer) => PDFDocument.load(buffer))
+        : await generateCertificatePdf(certificatePayload);
+    }
 
     const newDocumentData: Array<{ oldDocumentDataId: string; newDocumentDataId: string }> = [];
 
-    for (const { envelopeItem, pdfData } of prefetchedItems) {
+    // Query for Sign8 pending signatures that contain signed PDFs (QES or AES)
+    const sign8RecipientIds = envelope.recipients
+      .filter(
+        (r) => r.signatureLevel === SignatureLevel.QES || r.signatureLevel === SignatureLevel.AES,
+      )
+      .map((r) => r.id);
+
+    const sign8PendingSignatures = await prisma.sign8QESPendingSignature.findMany({
+      where: {
+        recipientId: {
+          in: sign8RecipientIds,
+        },
+      },
+      select: {
+        id: true,
+        recipientId: true,
+        preparedPdfData: true,
+        createdAt: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    // Warn if any Sign8 recipient is missing their pending signature
+    const missingPending = sign8RecipientIds.filter(
+      (id) => !sign8PendingSignatures.some((sig) => sig.recipientId === id),
+    );
+
+    if (missingPending.length > 0) {
+      console.error(
+        `Sign8 pending signatures missing for recipient IDs: ${missingPending.join(', ')}. ` +
+          'CMS signatures for these recipients will be lost.',
+      );
+    }
+
+    // Get the first Sign8-signed PDF if available (there should only be one per document)
+    // Note: this may be updated below if fields need to be rendered incrementally
+    let qesSignedPdfData =
+      sign8PendingSignatures.length > 0 ? sign8PendingSignatures[0].preparedPdfData : null;
+
+    // Determine if all non-QES/AES recipients signed BEFORE the QES PDF was prepared.
+    // sign8.authorize renders only fields that were inserted at that time.
+    // If any non-QES recipient signed AFTER QES preparation, their visual fields
+    // are NOT in the QES PDF and we must fall back to the normal rendering path.
+    const qesPreparedAt =
+      sign8PendingSignatures.length > 0 ? sign8PendingSignatures[0].createdAt : null;
+
+    let hasUnrenderedFieldsInQesPdf =
+      qesPreparedAt !== null &&
+      envelope.recipients.some(
+        (r) =>
+          r.role !== RecipientRole.CC &&
+          !sign8RecipientIds.includes(r.id) &&
+          r.signingStatus === SigningStatus.SIGNED &&
+          r.signedAt !== null &&
+          r.signedAt > qesPreparedAt,
+      );
+
+    // If SES recipients signed after QES preparation, render their fields incrementally
+    // instead of destroying the QES CMS signature by falling back to PDFDocument.load().
+    if (hasUnrenderedFieldsInQesPdf && qesSignedPdfData !== null) {
+      const unrenderedRecipientIds = envelope.recipients
+        .filter(
+          (r) =>
+            !sign8RecipientIds.includes(r.id) &&
+            r.role !== RecipientRole.CC &&
+            r.signingStatus === SigningStatus.SIGNED &&
+            r.signedAt !== null &&
+            r.signedAt > qesPreparedAt!,
+        )
+        .map((r) => r.id);
+
+      const unrenderedFields = envelope.fields.filter(
+        (f) => f.inserted && unrenderedRecipientIds.includes(f.recipientId),
+      );
+
+      if (unrenderedFields.length > 0) {
+        console.log(
+          'Rendering',
+          unrenderedFields.length,
+          'fields incrementally for recipients who signed after QES preparation',
+        );
+
+        try {
+          const qesPdfBuffer = Buffer.from(qesSignedPdfData, 'base64');
+          const augmentedPdf = await renderAndAddFieldsIncremental(qesPdfBuffer, unrenderedFields);
+
+          // Update the signed PDF data so decorateAndSignPdf uses the
+          // version with all fields visible
+          qesSignedPdfData = augmentedPdf.toString('base64');
+          hasUnrenderedFieldsInQesPdf = false;
+        } catch (error) {
+          console.error(
+            'Failed to render fields incrementally, falling back to normal path:',
+            error,
+          );
+        }
+      } else {
+        hasUnrenderedFieldsInQesPdf = false;
+      }
+    }
+
+    // Skip org SES when ALL non-CC recipients are Sign8 (AES/QES) — their CMS signatures
+    // are already legally binding, and an additional org SES would be redundant.
+    const allRecipientsAreSign8 = recipientsWithoutCCers.every(
+      (r) => r.signatureLevel === SignatureLevel.QES || r.signatureLevel === SignatureLevel.AES,
+    );
+
+    for (const envelopeItem of envelopeItems) {
       const envelopeItemFields = envelope.envelopeItems.find(
         (item) => item.id === envelopeItem.id,
       )?.field;
@@ -212,72 +332,16 @@ export const run = async ({
         throw new Error(`Envelope item fields not found for envelope item ${envelopeItem.id}`);
       }
 
-      let certificateDoc: PDF | null = null;
-      let auditLogDoc: PDF | null = null;
-
-      if (needsCertificate || needsAuditLog) {
-        const pdfDoc = await PDF.load(pdfData);
-
-        const { width: pageWidth, height: pageHeight } = getLastPageDimensions(pdfDoc);
-
-        const additionalAuditLogs = [
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            ...envelopeCompletedAuditLog,
-            id: '',
-            createdAt: new Date(),
-          } as TDocumentAuditLog,
-        ];
-
-        const certificatePayload = {
-          envelope: {
-            ...envelope,
-            status: finalEnvelopeStatus,
-          },
-          recipients: envelope.recipients,
-          fields,
-          language: envelope.documentMeta.language,
-          envelopeOwner: {
-            email: envelope.user.email,
-            name: envelope.user.name || '',
-          },
-          envelopeItems: envelopeItems.map((item) => item.title),
-          pageWidth,
-          pageHeight,
-          additionalAuditLogs,
-        };
-
-        const makeCertificatePdf = async () =>
-          usePlaywrightPdf
-            ? getCertificatePdf({
-                documentId,
-                language: envelope.documentMeta.language,
-              }).then(async (buffer) => PDF.load(buffer))
-            : generateCertificatePdf(certificatePayload);
-
-        const makeAuditLogPdf = async () =>
-          usePlaywrightPdf
-            ? getAuditLogsPdf({
-                documentId,
-                language: envelope.documentMeta.language,
-              }).then(async (buffer) => PDF.load(buffer))
-            : generateAuditLogPdf(certificatePayload);
-
-        [certificateDoc, auditLogDoc] = await Promise.all([
-          needsCertificate ? makeCertificatePdf() : null,
-          needsAuditLog ? makeAuditLogPdf() : null,
-        ]);
-      }
-
       const result = await decorateAndSignPdf({
         envelope,
         envelopeItem,
         envelopeItemFields,
         isRejected,
         rejectionReason,
-        pdfData,
         certificateDoc,
-        auditLogDoc,
+        qesSignedPdfData: hasUnrenderedFieldsInQesPdf ? null : qesSignedPdfData,
+        qesRecipientIds: sign8RecipientIds,
+        skipOrgSes: allRecipientsAreSign8,
       });
 
       newDocumentData.push(result);
@@ -306,14 +370,63 @@ export const run = async ({
           id: envelope.id,
         },
         data: {
-          status: finalEnvelopeStatus,
+          status: isRejected ? DocumentStatus.REJECTED : DocumentStatus.COMPLETED,
           completedAt: new Date(),
         },
       });
 
-      await tx.documentAuditLog.create({
-        data: envelopeCompletedAuditLog,
+      // Extract Sign8 signatures (QES, AES) for audit logging
+      const recipientsWithFields = await tx.recipient.findMany({
+        where: {
+          envelopeId: envelope.id,
+          signatureLevel: {
+            in: [SignatureLevel.QES, SignatureLevel.AES],
+          },
+        },
+        include: {
+          fields: {
+            include: {
+              signature: true,
+            },
+          },
+        },
       });
+
+      const qesSignatures = extractQESSignatures(recipientsWithFields);
+
+      await tx.documentAuditLog.create({
+        data: createDocumentAuditLogData({
+          type: DOCUMENT_AUDIT_LOG_TYPE.DOCUMENT_COMPLETED,
+          envelopeId: envelope.id,
+          requestMetadata,
+          user: null,
+          data: {
+            transactionId: nanoid(),
+            ...(isRejected ? { isRejected: true, rejectionReason: rejectionReason } : {}),
+            ...(qesSignatures.length > 0
+              ? {
+                  qesSignatures: qesSignatures.map((sig) => ({
+                    recipientName: sig.recipientName,
+                    recipientEmail: sig.recipientEmail,
+                    signatureLevel: sig.signatureLevel,
+                    signedAt: sig.signedAt.toISOString(),
+                  })),
+                }
+              : {}),
+          },
+        }),
+      });
+
+      // Clean up Sign8 pending signatures after successful sealing
+      if (sign8PendingSignatures.length > 0) {
+        await tx.sign8QESPendingSignature.deleteMany({
+          where: {
+            id: {
+              in: sign8PendingSignatures.map((sig) => sig.id),
+            },
+          },
+        });
+      }
     });
 
     return {
@@ -364,13 +477,14 @@ type DecorateAndSignPdfOptions = {
   envelopeItemFields: Field[];
   isRejected: boolean;
   rejectionReason: string;
-  pdfData: Uint8Array;
-  certificateDoc: PDF | null;
-  auditLogDoc: PDF | null;
+  certificateDoc: PDFDocument | null;
+  qesSignedPdfData: string | null;
+  qesRecipientIds: number[];
+  skipOrgSes: boolean;
 };
 
 /**
- * Normalize, flatten and insert fields into a PDF document.
+ * Fetch, normalize, flatten and insert fields into a PDF document.
  */
 const decorateAndSignPdf = async ({
   envelope,
@@ -378,118 +492,282 @@ const decorateAndSignPdf = async ({
   envelopeItemFields,
   isRejected,
   rejectionReason,
-  pdfData,
   certificateDoc,
-  auditLogDoc,
+  qesSignedPdfData,
+  qesRecipientIds,
+  skipOrgSes,
 }: DecorateAndSignPdfOptions) => {
-  let pdfDoc = await PDF.load(pdfData);
+  // When a QES/AES-signed PDF exists, use it directly (optionally adding org SES).
+  if (qesSignedPdfData !== null && qesRecipientIds.length > 0) {
+    const qesPdfBuffer = Buffer.from(qesSignedPdfData, 'base64');
+
+    let finalPdf: Buffer;
+
+    if (skipOrgSes) {
+      // All signers used Sign8 (AES/QES) — no org SES needed
+      console.log('All recipients are Sign8 - using signed PDF without org SES');
+      finalPdf = qesPdfBuffer;
+    } else {
+      // Mixed signers — add org SES incrementally to certify non-Sign8 fields
+      console.log('QES-signed PDF found - adding org SES signature incrementally');
+
+      // Collect signature field positions for non-Sign8 (SES) recipients
+      // so the org SES widget is visible and clickable in Adobe
+      const sesSignatureFields: Array<{
+        page: number;
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+      }> = [];
+
+      try {
+        const tempDoc = await PDFDocument.load(qesPdfBuffer);
+        const sesSignatureItemFields = envelopeItemFields.filter(
+          (field) =>
+            (field.type === FieldType.SIGNATURE || field.type === FieldType.FREE_SIGNATURE) &&
+            field.inserted &&
+            !qesRecipientIds.includes(field.recipientId),
+        );
+
+        for (const field of sesSignatureItemFields) {
+          const widthPercent = Number(field.width);
+          const heightPercent = Number(field.height);
+
+          if (widthPercent <= 0 || heightPercent <= 0) {
+            continue;
+          }
+
+          const pageIndex = field.page - 1;
+          if (pageIndex < 0 || pageIndex >= tempDoc.getPageCount()) {
+            continue;
+          }
+
+          const page = tempDoc.getPage(pageIndex);
+          const { width: pageWidth, height: pageHeight } = getPageSize(page);
+
+          const fieldWidth = (widthPercent / 100) * pageWidth;
+          const fieldHeight = (heightPercent / 100) * pageHeight;
+          const fieldX = (Number(field.positionX) / 100) * pageWidth;
+          const fieldY = pageHeight - (Number(field.positionY) / 100) * pageHeight - fieldHeight;
+
+          sesSignatureFields.push({
+            page: field.page,
+            x: fieldX,
+            y: fieldY,
+            width: fieldWidth,
+            height: fieldHeight,
+          });
+        }
+      } catch (error) {
+        console.error('Error collecting SES signature field positions:', error);
+      }
+
+      finalPdf = await signPdfIncremental({
+        pdf: qesPdfBuffer,
+        signatureFields: sesSignatureFields,
+      });
+    }
+
+    const { name } = path.parse(envelopeItem.title);
+    const suffix = isRejected ? '_rejected.pdf' : '_signed.pdf';
+
+    const newDocumentData = await putPdfFileServerSide({
+      name: `${name}${suffix}`,
+      type: 'application/pdf',
+      arrayBuffer: async () => Promise.resolve(finalPdf),
+    });
+
+    return {
+      oldDocumentDataId: envelopeItem.documentData.id,
+      newDocumentDataId: newDocumentData.id,
+    };
+  }
+
+  let pdfDoc: PDFDocument;
+  const fieldsToInsert = envelopeItemFields;
+
+  {
+    const pdfData = await getFileServerSide(envelopeItem.documentData);
+    pdfDoc = await PDFDocument.load(pdfData);
+  }
 
   // Normalize and flatten layers that could cause issues with the signature
-  pdfDoc.flattenAll();
-  // Upgrade to PDF 1.7 for better compatibility with signing
-  pdfDoc.upgradeVersion('1.7');
+  normalizeSignatureAppearances(pdfDoc);
+  await flattenForm(pdfDoc);
+  flattenAnnotations(pdfDoc);
 
   // Add rejection stamp if the document is rejected
-  if (isRejected) {
+  if (isRejected && rejectionReason) {
     await addRejectionStampToPdf(pdfDoc, rejectionReason);
   }
 
   if (certificateDoc) {
-    await pdfDoc.copyPagesFrom(
+    const certificatePages = await pdfDoc.copyPages(
       certificateDoc,
-      Array.from({ length: certificateDoc.getPageCount() }, (_, index) => index),
+      certificateDoc.getPageIndices(),
     );
-  }
 
-  if (auditLogDoc) {
-    await pdfDoc.copyPagesFrom(
-      auditLogDoc,
-      Array.from({ length: auditLogDoc.getPageCount() }, (_, index) => index),
-    );
+    certificatePages.forEach((page) => {
+      pdfDoc.addPage(page);
+    });
   }
 
   // Handle V1 and legacy insertions.
   if (envelope.internalVersion === 1) {
-    const legacy_pdfLibDoc = await PDFDocument.load(await pdfDoc.save({ useXRefStream: true }));
-
-    for (const field of envelopeItemFields) {
+    for (const field of fieldsToInsert) {
       if (field.inserted) {
         if (envelope.useLegacyFieldInsertion) {
-          await legacy_insertFieldInPDF(legacy_pdfLibDoc, field);
+          await legacy_insertFieldInPDF(pdfDoc, field);
         } else {
-          await insertFieldInPDFV1(legacy_pdfLibDoc, field);
+          await insertFieldInPDFV1(pdfDoc, field);
         }
       }
     }
-
-    // Should never run into issues with this flatten since all
-    // arcoFields are created by pdf-lib itself.
-    legacy_pdfLibDoc.getForm().flatten();
-
-    await pdfDoc.reload(await legacy_pdfLibDoc.save());
   }
 
   // Handle V2 envelope insertions.
   if (envelope.internalVersion === 2) {
-    const fieldsGroupedByPage = groupBy(envelopeItemFields, (field) => field.page);
+    const fieldsGroupedByPage = groupBy(fieldsToInsert, (field) => field.page);
 
     for (const [pageNumber, fields] of Object.entries(fieldsGroupedByPage)) {
       const page = pdfDoc.getPage(Number(pageNumber) - 1);
+      const pageRotation = page.getRotation();
 
-      if (!page) {
-        throw new Error(`Page ${pageNumber} does not exist`);
+      let { width: pageWidth, height: pageHeight } = getPageSize(page);
+
+      let pageRotationInDegrees = match(pageRotation.type)
+        .with(RotationTypes.Degrees, () => pageRotation.angle)
+        .with(RotationTypes.Radians, () => radiansToDegrees(pageRotation.angle))
+        .exhaustive();
+
+      // Round to the closest multiple of 90 degrees.
+      pageRotationInDegrees = Math.round(pageRotationInDegrees / 90) * 90;
+
+      // PDFs can have pages that are rotated, which are correctly rendered in the frontend.
+      // However when we load the PDF in the backend, the rotation is applied.
+      // To account for this, we swap the width and height for pages that are rotated by 90/270
+      // degrees. This is so we can calculate the virtual position the field was placed if it
+      // was correctly oriented in the frontend.
+      if (pageRotationInDegrees === 90 || pageRotationInDegrees === 270) {
+        [pageWidth, pageHeight] = [pageHeight, pageWidth];
       }
 
-      const pageWidth = page.width;
-      const pageHeight = page.height;
+      // Rotate the page to the orientation that the react-pdf renders on the frontend.
+      // Note: These transformations are undone at the end of the function.
+      // If you change this if statement, update the if statement at the end as well
+      if (pageRotationInDegrees !== 0) {
+        let translateX = 0;
+        let translateY = 0;
 
-      const overlayBytes = await insertFieldInPDFV2({
+        switch (pageRotationInDegrees) {
+          case 90:
+            translateX = pageHeight;
+            translateY = 0;
+            break;
+          case 180:
+            translateX = pageWidth;
+            translateY = pageHeight;
+            break;
+          case 270:
+            translateX = 0;
+            translateY = pageWidth;
+            break;
+          case 0:
+          default:
+            translateX = 0;
+            translateY = 0;
+        }
+
+        page.pushOperators(pushGraphicsState());
+        page.pushOperators(translate(translateX, translateY), rotateDegrees(pageRotationInDegrees));
+      }
+
+      const renderedPdfOverlay = await insertFieldInPDFV2({
         pageWidth,
         pageHeight,
         fields,
       });
 
-      const overlayPdf = await PDF.load(overlayBytes);
+      const [embeddedPage] = await pdfDoc.embedPdf(renderedPdfOverlay);
 
-      const embeddedPage = await pdfDoc.embedPage(overlayPdf, 0);
-
-      // Rotate the page to the orientation that the react-pdf renders on the frontend.
-      let translateX = 0;
-      let translateY = 0;
-
-      switch (page.rotation) {
-        case 90:
-          translateX = pageHeight;
-          translateY = 0;
-          break;
-        case 180:
-          translateX = pageWidth;
-          translateY = pageHeight;
-          break;
-        case 270:
-          translateX = 0;
-          translateY = pageWidth;
-          break;
-      }
-
-      // Draw the overlay on the page
+      // Draw the SVG on the page
       page.drawPage(embeddedPage, {
-        x: translateX,
-        y: translateY,
-        rotate: {
-          angle: page.rotation,
-        },
+        x: 0,
+        y: 0,
+        width: pageWidth,
+        height: pageHeight,
       });
+
+      // Remove the transformations applied to the page if any were applied.
+      if (pageRotationInDegrees !== 0) {
+        page.pushOperators(popGraphicsState());
+      }
     }
   }
 
   // Re-flatten the form to handle our checkbox and radio fields that
   // create native arcoFields
-  pdfDoc.flattenAll();
+  await flattenForm(pdfDoc);
 
-  pdfDoc = await PDF.load(await pdfDoc.save({ useXRefStream: true }));
+  const pdfBytes = await pdfDoc.save();
 
-  const pdfBytes = await signPdf({ pdf: pdfDoc });
+  // Collect all inserted signature field positions for clickable widgets
+  const signatureFields: Array<{
+    page: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }> = [];
+
+  try {
+    const sigFields = envelopeItemFields.filter(
+      (field) =>
+        (field.type === FieldType.SIGNATURE || field.type === FieldType.FREE_SIGNATURE) &&
+        field.inserted,
+    );
+
+    for (const field of sigFields) {
+      const widthPercent = Number(field.width);
+      const heightPercent = Number(field.height);
+
+      // Skip fields with invalid dimensions (default is -1)
+      if (widthPercent <= 0 || heightPercent <= 0) {
+        continue;
+      }
+
+      const pageIndex = field.page - 1;
+      if (pageIndex < 0 || pageIndex >= pdfDoc.getPageCount()) {
+        continue;
+      }
+
+      const page = pdfDoc.getPage(pageIndex);
+      const { width: pageWidth, height: pageHeight } = getPageSize(page);
+
+      // Field dimensions are stored as percentages (0-100)
+      const fieldWidth = (widthPercent / 100) * pageWidth;
+      const fieldHeight = (heightPercent / 100) * pageHeight;
+
+      // Convert from frontend coordinates (origin top-left) to PDF coordinates (origin bottom-left)
+      const fieldX = (Number(field.positionX) / 100) * pageWidth;
+      const fieldY = pageHeight - (Number(field.positionY) / 100) * pageHeight - fieldHeight;
+
+      signatureFields.push({
+        page: field.page,
+        x: fieldX,
+        y: fieldY,
+        width: fieldWidth,
+        height: fieldHeight,
+      });
+    }
+  } catch (error) {
+    console.error('Error collecting signature field positions:', error);
+    // Continue with empty signatureFields - will use fallback invisible widget
+  }
+
+  // Sign with organization certificate
+  const pdfBuffer = await signPdf({ pdf: Buffer.from(pdfBytes), signatureFields });
 
   const { name } = path.parse(envelopeItem.title);
 
@@ -499,7 +777,7 @@ const decorateAndSignPdf = async ({
   const newDocumentData = await putPdfFileServerSide({
     name: `${name}${suffix}`,
     type: 'application/pdf',
-    arrayBuffer: async () => Promise.resolve(pdfBytes),
+    arrayBuffer: async () => Promise.resolve(pdfBuffer),
   });
 
   return {

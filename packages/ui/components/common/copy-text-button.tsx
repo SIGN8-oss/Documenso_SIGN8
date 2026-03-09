@@ -27,17 +27,23 @@ export const CopyTextButton = ({
   const [copiedTimeout, setCopiedTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const onCopy = async () => {
-    await copy(value).then(() => onCopySuccess?.());
+    const success = await copy(value);
+
+    if (success) {
+      onCopySuccess?.();
+    }
 
     if (copiedTimeout) {
       clearTimeout(copiedTimeout);
     }
 
-    setCopiedTimeout(
-      setTimeout(() => {
-        setCopiedTimeout(null);
-      }, 2000),
-    );
+    if (success) {
+      setCopiedTimeout(
+        setTimeout(() => {
+          setCopiedTimeout(null);
+        }, 2000),
+      );
+    }
   };
 
   return (

@@ -2,7 +2,7 @@ import { createElement } from 'react';
 
 import { msg } from '@lingui/core/macro';
 import type { Recipient } from '@prisma/client';
-import { EnvelopeType, RecipientRole } from '@prisma/client';
+import { EnvelopeType, RecipientRole, SignatureLevel } from '@prisma/client';
 import { SendStatus, SigningStatus } from '@prisma/client';
 import { isDeepEqual } from 'remeda';
 
@@ -178,6 +178,7 @@ export const setDocumentRecipients = async ({
             email: recipient.email,
             role: recipient.role,
             signingOrder: recipient.signingOrder,
+            signatureLevel: recipient.signatureLevel || SignatureLevel.SES,
             envelopeId: envelope.id,
             sendStatus: recipient.role === RecipientRole.CC ? SendStatus.SENT : SendStatus.NOT_SENT,
             signingStatus:
@@ -189,6 +190,7 @@ export const setDocumentRecipients = async ({
             email: recipient.email,
             role: recipient.role,
             signingOrder: recipient.signingOrder,
+            signatureLevel: recipient.signatureLevel || SignatureLevel.SES,
             token: nanoid(),
             envelopeId: envelope.id,
             sendStatus: recipient.role === RecipientRole.CC ? SendStatus.SENT : SendStatus.NOT_SENT,
@@ -369,6 +371,7 @@ type RecipientData = {
   signingOrder?: number | null;
   accessAuth?: TRecipientAccessAuthTypes[];
   actionAuth?: TRecipientActionAuthTypes[];
+  signatureLevel?: SignatureLevel;
 };
 
 type RecipientDataWithClientId = Recipient & {
@@ -380,12 +383,14 @@ const hasRecipientBeenChanged = (recipient: Recipient, newRecipientData: Recipie
 
   const newRecipientAccessAuth = newRecipientData.accessAuth || [];
   const newRecipientActionAuth = newRecipientData.actionAuth || [];
+  const newSignatureLevel = newRecipientData.signatureLevel || SignatureLevel.SES;
 
   return (
     recipient.email !== newRecipientData.email ||
     recipient.name !== newRecipientData.name ||
     recipient.role !== newRecipientData.role ||
     recipient.signingOrder !== newRecipientData.signingOrder ||
+    recipient.signatureLevel !== newSignatureLevel ||
     !isDeepEqual(authOptions.accessAuth, newRecipientAccessAuth) ||
     !isDeepEqual(authOptions.actionAuth, newRecipientActionAuth)
   );

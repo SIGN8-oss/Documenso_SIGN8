@@ -53,6 +53,48 @@ const suppressFrontendConsoleInProd = () => {
 
 suppressFrontendConsoleInProd();
 
+// Suppress known React hydration warnings from Radix UI components
+// These warnings don't affect functionality - they occur because Radix UI
+// generates dynamic IDs that differ between server and client
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  const originalError = console.error;
+  const originalWarn = console.warn;
+
+  const suppressedPatterns = [
+    /Prop `(id|aria-controls|data-theme)` did not match/,
+    /Function components cannot be given refs/,
+    /Download the React DevTools/,
+    /Warning: Prop .* did not match\. Server:/,
+    /RenderingCancelledException/,
+    /File prop passed to <Document \/> changed/,
+  ];
+
+  const shouldSuppress = (args: unknown[]) => {
+    const message = args[0];
+    if (typeof message !== 'string') return false;
+    return suppressedPatterns.some((pattern) => pattern.test(message));
+  };
+
+  console.error = (...args: unknown[]) => {
+    if (!shouldSuppress(args)) {
+      originalError.apply(console, args);
+    }
+  };
+
+  console.warn = (...args: unknown[]) => {
+    if (!shouldSuppress(args)) {
+      originalWarn.apply(console, args);
+    }
+  };
+
+  // Suppress unhandled promise rejections for known non-critical errors
+  window.addEventListener('unhandledrejection', (event) => {
+    if (event.reason?.name === 'RenderingCancelledException') {
+      event.preventDefault();
+    }
+  });
+}
+
 function PosthogInit() {
   const postHogConfig = extractPostHogConfig();
 

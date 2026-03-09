@@ -570,12 +570,18 @@ enum RecipientRole {
   ASSISTANT
 }
 
+enum SignatureLevel {
+  SES // Simple Electronic Signature
+  AES // Advanced Electronic Signature
+  QES // Qualified Electronic Signature
+}
+
 /// @zod.import(["import { ZRecipientAuthOptionsSchema } from '@documenso/lib/types/document-auth';"])
 model Recipient {
-  id                   Int           @id @default(autoincrement())
+  id                   Int            @id @default(autoincrement())
   envelopeId           String
-  email                String        @db.VarChar(255)
-  name                 String        @default("") @db.VarChar(255)
+  email                String         @db.VarChar(255)
+  name                 String         @default("") @db.VarChar(255)
   token                String
   documentDeletedAt    DateTime?
   expired              DateTime? // deprecated Not in use. To be removed in a future migration.
@@ -585,13 +591,15 @@ model Recipient {
   authOptions          Json? /// [RecipientAuthOptions] @zod.custom.use(ZRecipientAuthOptionsSchema)
   signingOrder         Int? /// @zod.number.describe("The order in which the recipient should sign the document. Only works if the document is set to sequential signing.")
   rejectionReason      String?
-  role                 RecipientRole @default(SIGNER)
-  readStatus           ReadStatus    @default(NOT_OPENED)
-  signingStatus        SigningStatus @default(NOT_SIGNED)
-  sendStatus           SendStatus    @default(NOT_SENT)
-  envelope             Envelope      @relation(fields: [envelopeId], references: [id], onDelete: Cascade)
+  role                 RecipientRole  @default(SIGNER)
+  signatureLevel       SignatureLevel @default(SES)
+  readStatus           ReadStatus     @default(NOT_OPENED)
+  signingStatus        SigningStatus  @default(NOT_SIGNED)
+  sendStatus           SendStatus     @default(NOT_SENT)
+  envelope             Envelope       @relation(fields: [envelopeId], references: [id], onDelete: Cascade)
   fields               Field[]
   signatures           Signature[]
+  sign8PendingSignature Sign8QESPendingSignature?
 
   @@index([token])
   @@index([email])
@@ -641,17 +649,33 @@ model Field {
 }
 
 model Signature {
-  id                     Int      @id @default(autoincrement())
-  created                DateTime @default(now())
-  recipientId            Int
-  fieldId                Int      @unique
-  signatureImageAsBase64 String?
-  typedSignature         String?
+  id                       Int             @id @default(autoincrement())
+  created                  DateTime        @default(now())
+  recipientId              Int
+  fieldId                  Int             @unique
+  signatureImageAsBase64   String?
+  typedSignature           String?
+  signatureLevel           SignatureLevel?
+  sign8SignatureData       String? /// Base64 encoded PKCS#7/CMS signature from Sign8 for QES signatures
+  sign8PendingSignatureId  String?
+  sign8CredentialId        String?
 
   recipient Recipient @relation(fields: [recipientId], references: [id], onDelete: Cascade)
   field     Field     @relation(fields: [fieldId], references: [id], onDelete: Cascade)
 
   @@index([recipientId])
+}
+
+model Sign8QESPendingSignature {
+  id              String   @id @default(cuid())
+  recipientId     Int      @unique
+  preparedPdfData String   @db.Text /// Base64 encoded PDF with signature placeholder for signHash approach
+  documentHash    String /// Base64URL SHA-256 hash of the ByteRange content (what gets signed)
+  byteRange       String?  /// JSON array [start1, length1, start2, length2] for signature embedding
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime
+
+  recipient Recipient @relation(fields: [recipientId], references: [id], onDelete: Cascade)
 }
 
 model DocumentShareLink {
@@ -707,6 +731,9 @@ model Organisation {
 
   organisationAuthenticationPortalId String                           @unique
   organisationAuthenticationPortal   OrganisationAuthenticationPortal @relation(fields: [organisationAuthenticationPortalId], references: [id])
+
+  smtpSettings   OrganisationSmtpSettings?
+  emailTemplates OrganisationEmailTemplate[]
 
   @@index([name])
   @@index([ownerUserId])
@@ -1098,4 +1125,56 @@ model RateLimit {
 
   @@id([key, action, bucket])
   @@index([createdAt])
+}
+
+enum SmtpTransportType {
+  SMTP_AUTH
+  SMTP_API
+}
+
+model OrganisationSmtpSettings {
+  id             String            @id @default(cuid())
+  organisationId String            @unique
+  organisation   Organisation      @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  enabled        Boolean           @default(false)
+  transportType  SmtpTransportType @default(SMTP_AUTH)
+  host           String            @default("")
+  port           Int               @default(587)
+  secure         Boolean           @default(false)
+  username       String            @default("")
+  password       String            @default("")
+  apiKey         String            @default("")
+  apiKeyUser     String            @default("apikey")
+  fromName       String            @default("")
+  fromAddress    String            @default("")
+
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
+enum EmailTemplateType {
+  DOCUMENT_INVITE
+  DOCUMENT_COMPLETED
+  DOCUMENT_PENDING
+  DOCUMENT_REJECTED
+  DOCUMENT_CANCELLED
+  RECIPIENT_SIGNED
+}
+
+model OrganisationEmailTemplate {
+  id             String            @id @default(cuid())
+  organisationId String
+  organisation   Organisation      @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  type           EmailTemplateType
+  enabled        Boolean           @default(true)
+  subject        String?
+  body           String?
+
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@unique([organisationId, type])
+  @@index([organisationId])
 }

@@ -72,6 +72,7 @@ type EmailContextResponse = {
   settings: Omit<OrganisationGlobalSettings, 'id'>;
   claims: OrganisationClaim;
   organisationType: OrganisationType;
+  organisationId: string;
   senderEmail: {
     name: string;
     address: string;
@@ -172,6 +173,7 @@ const handleOrganisationEmailContext = async (organisationId: string) => {
     settings: organisation.organisationGlobalSettings,
     claims,
     organisationType: organisation.type,
+    organisationId: organisation.id,
   };
 };
 
@@ -223,6 +225,7 @@ const handleTeamEmailContext = async (teamId: number) => {
     settings: teamSettings,
     claims,
     organisationType: organisation.type,
+    organisationId: organisation.id,
   };
 };
 

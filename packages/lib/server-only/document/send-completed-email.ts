@@ -3,7 +3,7 @@ import { createElement } from 'react';
 import { msg } from '@lingui/core/macro';
 import { DocumentSource, EnvelopeType } from '@prisma/client';
 
-import { mailer } from '@documenso/email/mailer';
+import { getMailer } from '@documenso/email/mailer-factory';
 import { DocumentCompletedEmailTemplate } from '@documenso/email/templates/document-completed';
 import { prisma } from '@documenso/prisma';
 
@@ -21,6 +21,7 @@ import { renderCustomEmailTemplate } from '../../utils/render-custom-email-templ
 import { renderEmailWithI18N } from '../../utils/render-email-with-i18n';
 import { formatDocumentsPath } from '../../utils/teams';
 import { getEmailContext } from '../email/get-email-context';
+import { getEmailTemplate } from '../email/get-email-template';
 
 export interface SendDocumentOptions {
   id: EnvelopeIdOptions;
@@ -70,14 +71,17 @@ export const sendCompletedEmail = async ({ id, requestMetadata }: SendDocumentOp
     throw new Error('Document has no recipients');
   }
 
-  const { branding, emailLanguage, senderEmail, replyToEmail } = await getEmailContext({
-    emailType: 'RECIPIENT',
-    source: {
-      type: 'team',
-      teamId: envelope.teamId,
-    },
-    meta: envelope.documentMeta,
-  });
+  const { branding, emailLanguage, senderEmail, replyToEmail, organisationId } =
+    await getEmailContext({
+      emailType: 'RECIPIENT',
+      source: {
+        type: 'team',
+        teamId: envelope.teamId,
+      },
+      meta: envelope.documentMeta,
+    });
+
+  const mailer = await getMailer({ organisationId });
 
   const { user: owner } = envelope;
 
@@ -113,6 +117,20 @@ export const sendCompletedEmail = async ({ id, requestMetadata }: SendDocumentOp
   const isDocumentCompletedEmailEnabled = emailSettings.documentCompleted;
   const isOwnerDocumentCompletedEmailEnabled = emailSettings.ownerDocumentCompleted;
 
+  const i18n = await getI18nInstance(emailLanguage);
+
+  // Get organisation-level template for completed emails
+  const orgCompletedTemplate = await getEmailTemplate({
+    type: 'DOCUMENT_COMPLETED',
+    organisationId,
+    variables: {
+      'signer.name': owner.name || '',
+      'signer.email': owner.email,
+      'document.name': envelope.title,
+    },
+    defaultSubject: i18n._(msg`Signing Complete!`),
+  });
+
   // Send email to document owner if:
   // 1. Owner document completed emails are enabled AND
   // 2. Either:
@@ -138,8 +156,6 @@ export const sendCompletedEmail = async ({ id, requestMetadata }: SendDocumentOp
       }),
     ]);
 
-    const i18n = await getI18nInstance(emailLanguage);
-
     await mailer.sendMail({
       to: [
         {
@@ -149,7 +165,7 @@ export const sendCompletedEmail = async ({ id, requestMetadata }: SendDocumentOp
       ],
       from: senderEmail,
       replyTo: replyToEmail,
-      subject: i18n._(msg`Signing Complete!`),
+      subject: orgCompletedTemplate.subject,
       html,
       text,
       attachments: completedDocumentEmailAttachments,
@@ -210,7 +226,22 @@ export const sendCompletedEmail = async ({ id, requestMetadata }: SendDocumentOp
         }),
       ]);
 
-      const i18n = await getI18nInstance(emailLanguage);
+      // Get organisation-level template for this recipient
+      const recipientOrgTemplate = await getEmailTemplate({
+        type: 'DOCUMENT_COMPLETED',
+        organisationId,
+        variables: customEmailTemplate,
+        defaultSubject: i18n._(msg`Signing Complete!`),
+      });
+
+      // Determine subject: document-level subject takes precedence, then org template, then default
+      let emailSubject = recipientOrgTemplate.subject;
+      if (isDirectTemplate && envelope.documentMeta?.subject) {
+        emailSubject = renderCustomEmailTemplate(
+          envelope.documentMeta.subject,
+          customEmailTemplate,
+        );
+      }
 
       await mailer.sendMail({
         to: [
@@ -221,10 +252,7 @@ export const sendCompletedEmail = async ({ id, requestMetadata }: SendDocumentOp
         ],
         from: senderEmail,
         replyTo: replyToEmail,
-        subject:
-          isDirectTemplate && envelope.documentMeta?.subject
-            ? renderCustomEmailTemplate(envelope.documentMeta.subject, customEmailTemplate)
-            : i18n._(msg`Signing Complete!`),
+        subject: emailSubject,
         html,
         text,
         attachments: completedDocumentEmailAttachments,

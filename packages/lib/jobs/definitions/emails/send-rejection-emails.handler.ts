@@ -3,7 +3,7 @@ import { createElement } from 'react';
 import { msg } from '@lingui/core/macro';
 import { EnvelopeType, SendStatus, SigningStatus } from '@prisma/client';
 
-import { mailer } from '@documenso/email/mailer';
+import { getMailer } from '@documenso/email/mailer-factory';
 import DocumentRejectedEmail from '@documenso/email/templates/document-rejected';
 import DocumentRejectionConfirmedEmail from '@documenso/email/templates/document-rejection-confirmed';
 import { isRecipientEmailValidForSending } from '@documenso/lib/utils/recipients';
@@ -13,6 +13,7 @@ import { getI18nInstance } from '../../../client-only/providers/i18n-server';
 import { NEXT_PUBLIC_WEBAPP_URL } from '../../../constants/app';
 import { DOCUMENSO_INTERNAL_EMAIL } from '../../../constants/email';
 import { getEmailContext } from '../../../server-only/email/get-email-context';
+import { getEmailTemplate } from '../../../server-only/email/get-email-template';
 import { extractDerivedDocumentEmailSettings } from '../../../types/document-email';
 import { unsafeBuildEnvelopeIdQuery } from '../../../utils/envelope';
 import { renderEmailWithI18N } from '../../../utils/render-email-with-i18n';
@@ -74,16 +75,32 @@ export const run = async ({
     return;
   }
 
-  const { branding, emailLanguage, senderEmail, replyToEmail } = await getEmailContext({
-    emailType: 'RECIPIENT',
-    source: {
-      type: 'team',
-      teamId: envelope.teamId,
-    },
-    meta: envelope.documentMeta,
-  });
+  const { branding, emailLanguage, senderEmail, replyToEmail, organisationId } =
+    await getEmailContext({
+      emailType: 'RECIPIENT',
+      source: {
+        type: 'team',
+        teamId: envelope.teamId,
+      },
+      meta: envelope.documentMeta,
+    });
+
+  const mailer = await getMailer({ organisationId });
 
   const i18n = await getI18nInstance(emailLanguage);
+
+  // Get organisation-level template
+  const orgTemplate = await getEmailTemplate({
+    type: 'DOCUMENT_REJECTED',
+    organisationId,
+    variables: {
+      'signer.name': recipient.name,
+      'signer.email': recipient.email,
+      'document.name': envelope.title,
+      'rejection.reason': recipient.rejectionReason || '',
+    },
+    defaultSubject: i18n._(msg`Document "${envelope.title}" - Rejected by ${recipient.name}`),
+  });
 
   // Send confirmation email to the recipient who rejected
   if (isRecipientEmailValidForSending(recipient)) {
@@ -146,7 +163,7 @@ export const run = async ({
         address: documentOwner.email,
       },
       from: DOCUMENSO_INTERNAL_EMAIL, // Purposefully using internal email here.
-      subject: i18n._(msg`Document "${envelope.title}" - Rejected by ${recipient.name}`),
+      subject: orgTemplate.subject,
       html,
       text,
     });

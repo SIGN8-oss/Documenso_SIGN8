@@ -8,6 +8,7 @@ import {
   RecipientRole,
   SigningStatus,
 } from '@prisma/client';
+import { useSearchParams } from 'react-router';
 import { prop, sortBy } from 'remeda';
 
 import { isBase64Image } from '@documenso/lib/constants/signatures';
@@ -22,6 +23,14 @@ import { extractFieldInsertionValues } from '@documenso/lib/utils/envelope-signi
 import { trpc } from '@documenso/trpc/react';
 import type { TSignEnvelopeFieldValue } from '@documenso/trpc/server/envelope-router/sign-envelope-field.types';
 
+import { INITIAL_SIGN8_FLOW_STATE, type Sign8FlowState } from './sign8-flow-types';
+
+export type Sign8SignatureData = {
+  signature: string;
+  credentialId: string;
+  pendingSignatureId: string;
+};
+
 export type EnvelopeSigningContextValue = {
   isDirectTemplate: boolean;
 
@@ -31,6 +40,14 @@ export type EnvelopeSigningContextValue = {
   setEmail: (_value: string) => void;
   signature: string | null;
   setSignature: (_value: string | null) => void;
+
+  // Sign8 QES signature data
+  sign8SignatureData: Sign8SignatureData | null;
+  setSign8SignatureData: (_value: Sign8SignatureData | null) => void;
+
+  // Sign8 flow state for unified UX
+  sign8FlowState: Sign8FlowState;
+  setSign8FlowState: (_state: Sign8FlowState | ((_prev: Sign8FlowState) => Sign8FlowState)) => void;
 
   showPendingFieldTooltip: boolean;
   setShowPendingFieldTooltip: (_value: boolean) => void;
@@ -90,12 +107,47 @@ export const EnvelopeSigningProvider = ({
   envelopeData: initialEnvelopeData,
   children,
 }: EnvelopeSigningProviderProps) => {
+  const [searchParams] = useSearchParams();
   const [envelopeData, setEnvelopeData] = useState(initialEnvelopeData);
 
   const { envelope, recipient } = envelopeData;
 
   const [fullName, setFullName] = useState(initialFullName || '');
   const [email, setEmail] = useState(initialEmail || '');
+  const [sign8SignatureData, setSign8SignatureData] = useState<Sign8SignatureData | null>(null);
+
+  // Detect Sign8 callback params to initialize flow state immediately
+  // This prevents the "hopping" visual glitch where the page briefly shows before overlay
+  const initialSign8FlowState = useMemo((): Sign8FlowState => {
+    const sign8Success = searchParams.get('sign8_success');
+    const sign8Signature = searchParams.get('sign8_signature');
+    const sign8SignedPdf = searchParams.get('sign8_signed_pdf');
+    const sign8Credential = searchParams.get('sign8_credential');
+    const sign8PendingId = searchParams.get('sign8_pending_id');
+
+    const hasSignature = sign8Signature !== null;
+    const hasSignedPdf = sign8SignedPdf === 'true';
+
+    if (
+      sign8Success === 'true' &&
+      (hasSignature || hasSignedPdf) &&
+      sign8Credential &&
+      sign8PendingId
+    ) {
+      return {
+        step: 'verifying',
+        progress: 5,
+        fieldsCompleted: 0,
+        fieldsTotal: 0,
+        error: null,
+      };
+    }
+
+    return INITIAL_SIGN8_FLOW_STATE;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const [sign8FlowState, setSign8FlowState] = useState<Sign8FlowState>(initialSign8FlowState);
 
   const [showPendingFieldTooltip, setShowPendingFieldTooltip] = useState(false);
 
@@ -344,6 +396,10 @@ export const EnvelopeSigningProvider = ({
             // Dummy IDs.
             id: 0,
             fieldId: 0,
+            signatureLevel: null,
+            sign8SignatureData: null,
+            sign8PendingSignatureId: null,
+            sign8CredentialId: null,
           }
         : null;
     }
@@ -380,6 +436,10 @@ export const EnvelopeSigningProvider = ({
         setEmail,
         signature,
         setSignature,
+        sign8SignatureData,
+        setSign8SignatureData,
+        sign8FlowState,
+        setSign8FlowState,
         envelopeData,
         envelope,
 

@@ -84,26 +84,20 @@ export const AppNavMobile = ({ isMenuOpen, onMenuOpenChange }: AppNavMobileProps
     <Sheet open={isMenuOpen} onOpenChange={onMenuOpenChange}>
       <SheetContent className="flex w-full max-w-[350px] flex-col">
         <Link to="/" onClick={handleMenuItemClick}>
-          <img
-            src={LogoImage}
-            alt="Documenso Logo"
-            className="dark:invert"
-            width={170}
-            height={25}
-          />
+          <img src={LogoImage} alt="SIGN8 Logo" className="dark:invert" width={170} height={25} />
         </Link>
 
         <div className="mt-8 flex w-full flex-col items-start gap-y-4">
           {menuNavigationLinks.map(({ href, text }) => (
             <Link
               key={href}
-              className="text-foreground hover:text-foreground/80 flex items-center gap-2 text-2xl font-semibold"
+              className="flex items-center gap-2 text-2xl font-semibold text-foreground hover:text-foreground/80"
               to={href}
               onClick={() => handleMenuItemClick()}
             >
               {text}
               {href === '/inbox' && unreadCountData && unreadCountData.count > 0 && (
-                <span className="bg-primary text-primary-foreground flex h-6 min-w-[1.5rem] items-center justify-center rounded-full px-1.5 text-xs font-semibold">
+                <span className="flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground">
                   {unreadCountData.count > 99 ? '99+' : unreadCountData.count}
                 </span>
               )}
@@ -111,7 +105,7 @@ export const AppNavMobile = ({ isMenuOpen, onMenuOpenChange }: AppNavMobileProps
           ))}
 
           <button
-            className="text-foreground hover:text-foreground/80 text-2xl font-semibold"
+            className="text-2xl font-semibold text-foreground hover:text-foreground/80"
             onClick={async () => authClient.signOut()}
           >
             <Trans>Sign Out</Trans>

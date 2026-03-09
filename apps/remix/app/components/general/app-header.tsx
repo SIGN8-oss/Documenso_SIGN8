@@ -4,7 +4,9 @@ import { ReadStatus } from '@prisma/client';
 import { InboxIcon, MenuIcon, SearchIcon } from 'lucide-react';
 import { Link, useParams } from 'react-router';
 
+import { useOptionalCurrentOrganisation } from '@documenso/lib/client-only/providers/organisation';
 import { useSession } from '@documenso/lib/client-only/providers/session';
+import { NEXT_PUBLIC_WEBAPP_URL } from '@documenso/lib/constants/app';
 import { isPersonalLayout } from '@documenso/lib/utils/organisations';
 import { getRootHref } from '@documenso/lib/utils/params';
 import { trpc } from '@documenso/trpc/react';
@@ -25,6 +27,10 @@ export const Header = ({ className, ...props }: HeaderProps) => {
   const params = useParams();
 
   const { organisations } = useSession();
+  const currentOrganisation = useOptionalCurrentOrganisation();
+
+  // In personal layout mode, use the first (personal) organisation for branding
+  const effectiveOrganisation = currentOrganisation || organisations[0] || null;
 
   const [isCommandMenuOpen, setIsCommandMenuOpen] = useState(false);
   const [isHamburgerMenuOpen, setIsHamburgerMenuOpen] = useState(false);
@@ -38,6 +44,18 @@ export const Header = ({ className, ...props }: HeaderProps) => {
       // refetchInterval: 30000, // Refetch every 30 seconds
     },
   );
+
+  const { data: organisationWithSettings } = trpc.organisation.get.useQuery(
+    {
+      organisationReference: effectiveOrganisation?.url ?? '',
+    },
+    {
+      enabled: !!effectiveOrganisation?.url,
+    },
+  );
+
+  const brandingSettings = organisationWithSettings?.organisationGlobalSettings;
+  const hasBrandingLogo = brandingSettings?.brandingEnabled && brandingSettings?.brandingLogo;
 
   useEffect(() => {
     const onScroll = () => {
@@ -63,7 +81,15 @@ export const Header = ({ className, ...props }: HeaderProps) => {
           to={getRootHref(params)}
           className="hidden rounded-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:inline"
         >
-          <BrandingLogo className="h-8 w-auto" />
+          {hasBrandingLogo && effectiveOrganisation ? (
+            <img
+              src={`${NEXT_PUBLIC_WEBAPP_URL()}/api/branding/logo/organisation/${effectiveOrganisation.id}`}
+              alt="Logo"
+              className="h-8 w-auto"
+            />
+          ) : (
+            <BrandingLogo className="h-8 w-auto" />
+          )}
         </Link>
 
         <AppNavDesktop setIsCommandMenuOpen={setIsCommandMenuOpen} />

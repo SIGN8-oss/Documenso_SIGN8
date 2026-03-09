@@ -216,6 +216,10 @@ export const EmbedSignDocumentV2ClientPage = ({
                 created: new Date(),
                 signatureImageAsBase64: recipientSignature.signatureImageAsBase64,
                 typedSignature: recipientSignature.typedSignature,
+                signatureLevel: null,
+                sign8SignatureData: null,
+                sign8PendingSignatureId: null,
+                sign8CredentialId: null,
               }
             : undefined
         }

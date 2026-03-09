@@ -33,57 +33,74 @@ export default function SettingsLayout() {
 
   const organisationSettingRoutes = [
     {
+      key: 'general',
       path: `/o/${organisation.url}/settings/general`,
       label: t`General`,
       icon: Building2Icon,
     },
     {
+      key: 'preferences',
       path: `/o/${organisation.url}/settings/document`,
       label: t`Preferences`,
       icon: Settings2Icon,
       hideHighlight: true,
     },
     {
+      key: 'document',
       path: `/o/${organisation.url}/settings/document`,
       label: t`Document`,
       isSubNav: true,
     },
     {
+      key: 'branding',
       path: `/o/${organisation.url}/settings/branding`,
       label: t`Branding`,
       isSubNav: true,
     },
     {
+      key: 'email',
       path: `/o/${organisation.url}/settings/email`,
       label: t`Email`,
       isSubNav: true,
     },
     {
+      key: 'email-templates',
+      path: `/o/${organisation.url}/settings/email-templates`,
+      label: t`E-Mail Templates`,
+      isSubNav: true,
+    },
+    {
+      key: 'email-domains',
       path: `/o/${organisation.url}/settings/email-domains`,
       label: t`Email Domains`,
       icon: MailboxIcon,
     },
     {
+      key: 'teams',
       path: `/o/${organisation.url}/settings/teams`,
       label: t`Teams`,
       icon: FaUsers,
     },
     {
+      key: 'members',
       path: `/o/${organisation.url}/settings/members`,
       label: t`Members`,
       icon: Users2Icon,
     },
     {
+      key: 'groups',
       path: `/o/${organisation.url}/settings/groups`,
       label: t`Groups`,
       icon: GroupIcon,
     },
     {
+      key: 'sso',
       path: `/o/${organisation.url}/settings/sso`,
       label: t`SSO`,
       icon: ShieldCheckIcon,
     },
     {
+      key: 'billing',
       path: `/o/${organisation.url}/settings/billing`,
       label: t`Billing`,
       icon: CreditCardIcon,
@@ -150,7 +167,7 @@ export default function SettingsLayout() {
             <NavLink
               to={route.path}
               className={cn('group w-full justify-start', route.isSubNav && 'pl-8')}
-              key={route.path}
+              key={route.key}
             >
               <Button
                 variant="ghost"
@@ -159,7 +176,7 @@ export default function SettingsLayout() {
                 })}
               >
                 {route.icon && <route.icon className="mr-2 h-5 w-5" />}
-                <Trans>{route.label}</Trans>
+                {route.label}
               </Button>
             </NavLink>
           ))}

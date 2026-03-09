@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { useLingui } from '@lingui/react/macro';
-import { FieldType } from '@prisma/client';
-import { useNavigate, useRevalidator, useSearchParams } from 'react-router';
+import { FieldType, SignatureLevel } from '@prisma/client';
+import { useLocation, useNavigate, useRevalidator, useSearchParams } from 'react-router';
 
 import { useAnalytics } from '@documenso/lib/client-only/hooks/use-analytics';
 import { useCurrentEnvelopeRender } from '@documenso/lib/client-only/providers/envelope-render-provider';
@@ -37,17 +37,60 @@ export const EnvelopeSignerCompleteDialog = () => {
     nextRecipient,
     email,
     fullName,
+    signature,
+    sign8SignatureData,
+    sign8FlowState,
+    setSign8FlowState,
   } = useRequiredEnvelopeSigningContext();
+
+  const location = useLocation();
+  const requiresSign8 =
+    recipient.signatureLevel === SignatureLevel.QES ||
+    recipient.signatureLevel === SignatureLevel.AES;
 
   const { currentEnvelopeItem, setCurrentEnvelopeItem } = useCurrentEnvelopeRender();
 
   const { onDocumentCompleted, onDocumentError } = useEmbedSigningContext() || {};
+
+  // Auto-complete after Sign8 flow has signed all fields
+  const autoCompleteTriggeredRef = useRef(false);
 
   const { mutateAsync: completeDocument, isPending } =
     trpc.recipient.completeDocumentWithToken.useMutation();
 
   const { mutateAsync: createDocumentFromDirectTemplate } =
     trpc.template.createDocumentFromDirectTemplate.useMutation();
+
+  const handleSign8Required = () => {
+    const returnUrl = `${window.location.origin}${location.pathname}`;
+
+    // Use form POST to send signature data (can be large base64 image)
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/api/sign8/authorize';
+
+    const addField = (name: string, value: string) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    };
+
+    addField('token', recipient.token);
+    addField('returnUrl', returnUrl);
+
+    if (fullName) {
+      addField('fullName', fullName);
+    }
+
+    if (signature) {
+      addField('signature', signature);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+  };
 
   const handleOnNextFieldClick = () => {
     const nextField = recipientFieldsRemaining[0];
@@ -131,6 +174,41 @@ export const EnvelopeSignerCompleteDialog = () => {
       throw err;
     }
   };
+
+  // Auto-complete after Sign8 flow reaches 'completing' state
+  useEffect(() => {
+    if (
+      requiresSign8 &&
+      sign8FlowState.step === 'completing' &&
+      recipientFieldsRemaining.length === 0 &&
+      !autoCompleteTriggeredRef.current &&
+      !isPending
+    ) {
+      autoCompleteTriggeredRef.current = true;
+
+      void handleOnCompleteClick()
+        .then(() => {
+          // Set success state for the overlay
+          setSign8FlowState({
+            step: 'success',
+            progress: 100,
+            fieldsCompleted: sign8FlowState.fieldsTotal,
+            fieldsTotal: sign8FlowState.fieldsTotal,
+            error: null,
+          });
+        })
+        .catch((err) => {
+          setSign8FlowState({
+            step: 'error',
+            progress: 0,
+            fieldsCompleted: 0,
+            fieldsTotal: 0,
+            error: err instanceof Error ? err.message : 'Failed to complete document',
+          });
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requiresSign8, sign8FlowState.step, recipientFieldsRemaining.length, isPending]);
 
   /**
    * Direct template completion flow.
@@ -227,6 +305,11 @@ export const EnvelopeSignerCompleteDialog = () => {
     };
   }, [email, fullName, isDirectTemplate, recipient.email, recipient.name, recipient.fields]);
 
+  // When Sign8 flow is active (not idle), the overlay handles display - hide the button
+  if (sign8FlowState.step !== 'idle' && sign8FlowState.step !== 'error') {
+    return null;
+  }
+
   return (
     <DocumentSigningCompleteDialog
       isSubmitting={isPending}
@@ -247,6 +330,9 @@ export const EnvelopeSignerCompleteDialog = () => {
       }
       buttonSize="sm"
       position="center"
+      requiresSign8={requiresSign8}
+      sign8SignatureData={sign8SignatureData}
+      onSign8Required={handleSign8Required}
     />
   );
 };

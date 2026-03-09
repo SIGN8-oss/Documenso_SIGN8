@@ -1,4 +1,4 @@
-import { EnvelopeType, RecipientRole } from '@prisma/client';
+import { EnvelopeType, RecipientRole, SignatureLevel } from '@prisma/client';
 import { z } from 'zod';
 
 import { ZRecipientActionAuthTypesSchema } from '@documenso/lib/types/document-auth';
@@ -15,6 +15,7 @@ export const ZSetEnvelopeRecipientsRequestSchema = z.object({
       role: z.nativeEnum(RecipientRole),
       signingOrder: z.number().optional(),
       actionAuth: z.array(ZRecipientActionAuthTypesSchema).optional().default([]),
+      signatureLevel: z.nativeEnum(SignatureLevel).optional().default(SignatureLevel.SES),
     }),
   ),
 });

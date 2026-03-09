@@ -34,7 +34,7 @@ declare namespace NodeJS {
     NEXT_PRIVATE_UPLOAD_DISTRIBUTION_KEY_ID?: string;
     NEXT_PRIVATE_UPLOAD_DISTRIBUTION_KEY_CONTENTS?: string;
 
-    NEXT_PRIVATE_SIGNING_TRANSPORT?: 'local' | 'http' | 'gcloud-hsm';
+    NEXT_PRIVATE_SIGNING_TRANSPORT?: 'local' | 'http' | 'gcloud-hsm' | 'sign8-csc';
     NEXT_PRIVATE_SIGNING_PASSPHRASE?: string;
     NEXT_PRIVATE_SIGNING_LOCAL_FILE_PATH?: string;
     NEXT_PRIVATE_SIGNING_LOCAL_FILE_CONTENTS?: string;
@@ -49,6 +49,15 @@ declare namespace NodeJS {
     NEXT_PRIVATE_SIGNING_TIMESTAMP_AUTHORITY?: string;
     NEXT_PUBLIC_SIGNING_CONTACT_INFO?: string;
     NEXT_PRIVATE_USE_LEGACY_SIGNING_SUBFILTER?: string;
+
+    /** Sign8 CSC API configuration */
+    NEXT_PRIVATE_SIGNING_SIGN8_BASE_URL?: string;
+    NEXT_PRIVATE_SIGNING_SIGN8_CLIENT_ID?: string;
+    NEXT_PRIVATE_SIGNING_SIGN8_CLIENT_SECRET?: string;
+    NEXT_PRIVATE_SIGNING_SIGN8_CREDENTIAL_ID?: string;
+    NEXT_PRIVATE_SIGNING_SIGN8_PIN?: string;
+    /** CAdES conformance level for Sign8 signatures (Ades-B-B, Ades-B-T, Ades-B-LT, Ades-B-LTA) */
+    NEXT_PRIVATE_SIGNING_SIGN8_CONFORMANCE_LEVEL?: string;
 
     NEXT_PRIVATE_SMTP_TRANSPORT?: 'mailchannels' | 'resend' | 'smtp-auth' | 'smtp-api';
 

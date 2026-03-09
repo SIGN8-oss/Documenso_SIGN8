@@ -10,7 +10,7 @@ import {
   SendStatus,
 } from '@prisma/client';
 
-import { mailer } from '@documenso/email/mailer';
+import { getMailer } from '@documenso/email/mailer-factory';
 import DocumentInviteEmailTemplate from '@documenso/email/templates/document-invite';
 import { isRecipientEmailValidForSending } from '@documenso/lib/utils/recipients';
 import { prisma } from '@documenso/prisma';
@@ -22,6 +22,7 @@ import {
   RECIPIENT_ROLE_TO_EMAIL_TYPE,
 } from '../../../constants/recipient-roles';
 import { getEmailContext } from '../../../server-only/email/get-email-context';
+import { getEmailTemplate } from '../../../server-only/email/get-email-template';
 import { DOCUMENT_AUDIT_LOG_TYPE } from '../../../types/document-audit-logs';
 import { extractDerivedDocumentEmailSettings } from '../../../types/document-email';
 import { createDocumentAuditLogData } from '../../../utils/document-audit-logs';
@@ -93,15 +94,24 @@ export const run = async ({
     return;
   }
 
-  const { branding, emailLanguage, settings, organisationType, senderEmail, replyToEmail } =
-    await getEmailContext({
-      emailType: 'RECIPIENT',
-      source: {
-        type: 'team',
-        teamId: envelope.teamId,
-      },
-      meta: envelope.documentMeta,
-    });
+  const {
+    branding,
+    emailLanguage,
+    settings,
+    organisationType,
+    senderEmail,
+    replyToEmail,
+    organisationId,
+  } = await getEmailContext({
+    emailType: 'RECIPIENT',
+    source: {
+      type: 'team',
+      teamId: envelope.teamId,
+    },
+    meta: envelope.documentMeta,
+  });
+
+  const mailer = await getMailer({ organisationId });
 
   const customEmail = envelope?.documentMeta;
   const isDirectTemplate = envelope.source === DocumentSource.TEMPLATE_DIRECT_LINK;
@@ -155,7 +165,26 @@ export const run = async ({
     'signer.name': name,
     'signer.email': email,
     'document.name': envelope.title,
+    'sender.name': user.name || '',
+    'sender.email': user.email,
+    action: recipientActionVerb,
   };
+
+  // Get organisation-level template as additional fallback
+  const orgTemplate = await getEmailTemplate({
+    type: 'DOCUMENT_INVITE',
+    organisationId,
+    variables: customEmailTemplate,
+    defaultSubject: emailSubject,
+    defaultBody: emailMessage,
+  });
+
+  // Use organisation template if no document-level customization
+  const resolvedSubject =
+    !customEmail?.subject && orgTemplate.isCustom ? orgTemplate.subject : emailSubject;
+  if (!customEmail?.message && orgTemplate.body && orgTemplate.isCustom) {
+    emailMessage = orgTemplate.body;
+  }
 
   const assetBaseUrl = NEXT_PUBLIC_WEBAPP_URL() || 'http://localhost:3000';
   const signDocumentLink = `${NEXT_PUBLIC_WEBAPP_URL()}/sign/${recipient.token}`;
@@ -197,7 +226,7 @@ export const run = async ({
         from: senderEmail,
         replyTo: replyToEmail,
         subject: renderCustomEmailTemplate(
-          documentMeta?.subject || emailSubject,
+          documentMeta?.subject || resolvedSubject,
           customEmailTemplate,
         ),
         html,
