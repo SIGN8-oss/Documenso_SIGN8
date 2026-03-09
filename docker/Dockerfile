@@ -17,10 +17,10 @@ RUN apk add --no-cache libc6-compat
 RUN apk add --no-cache jq
 WORKDIR /app
 
-COPY . .
-
 # Bust cache when source changes (pass current git SHA as CACHE_BUST)
 ARG CACHE_BUST=1
+
+COPY . .
 
 RUN npm install -g "turbo@^1.9.3"
 
