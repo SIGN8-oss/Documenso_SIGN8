@@ -19,6 +19,9 @@ WORKDIR /app
 
 COPY . .
 
+# Bust cache when source changes (pass current git SHA as CACHE_BUST)
+ARG CACHE_BUST=1
+
 RUN npm install -g "turbo@^1.9.3"
 
 # Outputs to the /out folder
