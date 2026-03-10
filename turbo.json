@@ -2,12 +2,22 @@
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "build": {
-      "dependsOn": ["prebuild", "^build"],
-      "outputs": [".next/**", "!.next/cache/**", "build/**", "dist/**"]
+      "dependsOn": [
+        "prebuild",
+        "^build"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "build/**",
+        "dist/**"
+      ]
     },
     "prebuild": {
       "cache": false,
-      "dependsOn": ["^prebuild"]
+      "dependsOn": [
+        "^prebuild"
+      ]
     },
     "lint": {
       "cache": false
@@ -23,7 +33,9 @@
       "persistent": true
     },
     "start": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false,
       "persistent": true
     },
@@ -31,11 +43,15 @@
       "cache": false
     },
     "test:e2e": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     }
   },
-  "globalDependencies": ["**/.env.*local"],
+  "globalDependencies": [
+    "**/.env.*local"
+  ],
   "globalEnv": [
     "APP_VERSION",
     "PORT",
