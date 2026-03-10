@@ -5,7 +5,8 @@ FROM node:22-alpine3.22 AS base
 
 RUN apk add --no-cache openssl
 RUN apk add --no-cache font-freefont
-
+# Required for native modules that compile from source (e.g. aws-crt via @aws-sdk/signature-v4-crt)
+RUN apk add --no-cache make cmake g++ bash python3
 
 ###########################
 #    BUILDER CONTAINER    #
@@ -33,8 +34,6 @@ FROM base AS installer
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 RUN apk add --no-cache jq
-# Required for node_modules/aws-crt
-RUN apk add --no-cache make cmake g++ openssl bash
 
 WORKDIR /app
 

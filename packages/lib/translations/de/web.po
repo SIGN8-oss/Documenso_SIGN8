@@ -543,8 +543,8 @@ msgid "<0>{organisationName}</0> has requested to create an account on your beha
 msgstr "<0>{organisationName}</0> hat angefragt, ein Konto in Ihrem Namen zu erstellen."
 
 #: packages/email/templates/organisation-account-link-confirmation.tsx
-msgid "<0>{organisationName}</0> has requested to link your current SIGN8 account to their organisation."
-msgstr ""
+msgid "<0>{organisationName}</0> has requested to link your current Sign8 account to their organisation."
+msgstr "<0>{organisationName}</0> hat angefragt, Ihr aktuelles Sign8-Konto mit der Organisation zu verknüpfen."
 
 #: apps/remix/app/components/general/document-signing/document-signing-page-view-v1.tsx
 msgid "<0>{senderName} {senderEmail}</0> has invited you to approve this document"
@@ -583,8 +583,8 @@ msgid "<0>{senderName} {senderEmail}</0> on behalf of \"{0}\" has invited you to
 msgstr "<0>{senderName} {senderEmail}</0> im Namen von \"{0}\" hat Sie eingeladen, dieses Dokument anzusehen"
 
 #: packages/email/templates/confirm-team-email.tsx
-msgid "<0>{teamName}</0> has requested to use your email address for their team on SIGN8."
-msgstr ""
+msgid "<0>{teamName}</0> has requested to use your email address for their team on Sign8."
+msgstr "<0>{teamName}</0> hat angefragt, Ihre E-Mail-Adresse für das Team auf Sign8 zu verwenden."
 
 #: apps/remix/app/routes/_unauthenticated+/organisation.sso.confirmation.$token.tsx
 msgid "<0>Account management:</0> Modify your account settings, permissions, and preferences"
@@ -824,8 +824,8 @@ msgid "A means to print or download documents for your records"
 msgstr "Ein Mittel, um Dokumente für Ihre Unterlagen zu drucken oder herunterzuladen"
 
 #: packages/email/templates/organisation-join.tsx
-msgid "A member has joined your organisation on SIGN8"
-msgstr ""
+msgid "A member has joined your organisation on Sign8"
+msgstr "Ein Mitglied ist Ihrer Organisation auf Sign8 beigetreten"
 
 #: packages/lib/jobs/definitions/emails/send-organisation-member-left-email.handler.ts
 msgid "A member has left your organisation"
@@ -836,8 +836,8 @@ msgid "A member has left your organisation {organisationName}"
 msgstr "Ein Mitglied hat Ihre Organisation {organisationName} verlassen"
 
 #: packages/email/templates/organisation-leave.tsx
-msgid "A member has left your organisation on SIGN8"
-msgstr ""
+msgid "A member has left your organisation on Sign8"
+msgstr "Ein Mitglied hat Ihre Organisation auf Sign8 verlassen"
 
 #: packages/lib/jobs/definitions/emails/send-organisation-member-joined-email.handler.ts
 msgid "A new member has joined your organisation"
@@ -880,8 +880,8 @@ msgid "A request has been made to create an account for you"
 msgstr "Es wurde eine Anfrage gestellt, ein Konto für Sie zu erstellen."
 
 #: packages/email/templates/organisation-account-link-confirmation.tsx
-msgid "A request has been made to link your SIGN8 account"
-msgstr ""
+msgid "A request has been made to link your Sign8 account"
+msgstr "Es wurde eine Anfrage gestellt, Ihr Sign8-Konto zu verknüpfen"
 
 #. placeholder {0}: team.name
 #: packages/lib/server-only/team/create-team-email-verification.ts
@@ -938,12 +938,12 @@ msgid "Accept & Link Account"
 msgstr "Akzeptieren & Konto verknüpfen"
 
 #: packages/email/templates/organisation-invite.tsx
-msgid "Accept invitation to join an organisation on SIGN8"
-msgstr ""
+msgid "Accept invitation to join an organisation on Sign8"
+msgstr "Einladung beitreten einer Organisation auf Sign8 annehmen"
 
 #: packages/email/templates/confirm-team-email.tsx
-msgid "Accept team email request for {teamName} on SIGN8"
-msgstr ""
+msgid "Accept team email request for {teamName} on Sign8"
+msgstr "Team-E-Mail-Anfrage für {teamName} auf Sign8 annehmen"
 
 #: apps/remix/app/routes/_unauthenticated+/articles.signature-disclosure.tsx
 msgid "Acceptance and Consent"
@@ -5551,8 +5551,8 @@ msgid "It's currently not your turn to sign. You will receive an email with inst
 msgstr "Es ist derzeit nicht deine Reihe zu unterschreiben. Du erhältst eine E-Mail mit Anweisungen, sobald es deine Reihe ist, das Dokument zu unterschreiben."
 
 #: packages/email/templates/organisation-invite.tsx
-msgid "Join {organisationName} on SIGN8"
-msgstr ""
+msgid "Join {organisationName} on Sign8"
+msgstr "{organisationName} auf Sign8 beitreten"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.support.tsx
 msgid "Join our community on <0>Discord</0> for community support and discussion."
@@ -5716,8 +5716,8 @@ msgid "Link template"
 msgstr "Vorlage verlinken"
 
 #: packages/email/templates/organisation-account-link-confirmation.tsx
-msgid "Link your SIGN8 account"
-msgstr ""
+msgid "Link your Sign8 account"
+msgstr "Ihr Sign8-Konto verknüpfen"
 
 #: apps/remix/app/routes/_authenticated+/settings+/security._index.tsx
 #: apps/remix/app/routes/_authenticated+/settings+/security.linked-accounts.tsx
@@ -8925,8 +8925,8 @@ msgid "Team email removed"
 msgstr "Team-E-Mail entfernt"
 
 #: packages/email/templates/team-email-removed.tsx
-msgid "Team email removed for {teamName} on SIGN8"
-msgstr ""
+msgid "Team email removed for {teamName} on Sign8"
+msgstr "Team-E-Mail für {teamName} auf Sign8 entfernt"
 
 #: apps/remix/app/routes/_unauthenticated+/team.verify.email.$token.tsx
 msgid "Team email verification"
@@ -9706,8 +9706,8 @@ msgid "This document was created using a direct link."
 msgstr "Dieses Dokument wurde mit einem direkten Link erstellt."
 
 #: packages/email/template-components/template-footer.tsx
-msgid "This document was sent using <0>SIGN8</0>."
-msgstr ""
+msgid "This document was sent using <0>Sign8</0>."
+msgstr "Dieses Dokument wurde mit <0>Sign8</0> versendet."
 
 #: apps/remix/app/components/dialogs/envelope-duplicate-dialog.tsx
 msgid "This document will be duplicated."
@@ -11287,7 +11287,7 @@ msgstr "Willkommen bei {organisationName}"
 
 #: packages/email/template-components/template-confirmation-email.tsx
 msgid "Welcome to SIGN8!"
-msgstr ""
+msgstr "Willkommen bei SIGN8!"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.sso.tsx
 msgid "Well-known URL is required"
@@ -11545,8 +11545,8 @@ msgid "You can only detect fields in draft envelopes"
 msgstr "Sie können Felder nur in Entwürfen von Umschlägen erkennen."
 
 #: packages/email/templates/confirm-team-email.tsx
-msgid "You can revoke access at any time in your team settings on SIGN8 <0>here</0>."
-msgstr ""
+msgid "You can revoke access at any time in your team settings on Sign8 <0>here</0>."
+msgstr "Sie können den Zugriff jederzeit in Ihren Team-Einstellungen auf Sign8 <0>hier</0> widerrufen."
 
 #: apps/remix/app/components/forms/public-profile-form.tsx
 msgid "You can update the profile URL by updating the team URL in the general settings page."
@@ -11647,7 +11647,7 @@ msgstr "Sie wurden von <0>{0}</0> eingeladen, deren Organisation beizutreten."
 #. placeholder {0}: organisation.name
 #: packages/lib/server-only/organisation/create-organisation-member-invites.ts
 msgid "You have been invited to join {0} on SIGN8"
-msgstr ""
+msgstr "Sie wurden eingeladen, {0} auf SIGN8 beizutreten"
 
 #: packages/email/templates/organisation-invite.tsx
 msgid "You have been invited to join the following organisation"

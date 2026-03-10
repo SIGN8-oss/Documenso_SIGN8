@@ -97,7 +97,7 @@ export const run = async ({
             'signer.name': recipient.name,
             'signer.email': recipient.email,
             'document.name': envelope.title,
-            'cancellation.reason': cancellationReason || 'The document has been cancelled.',
+            'cancellation.reason': cancellationReason || '',
           },
           defaultSubject: i18n._(msg`Document "${envelope.title}" Cancelled`),
         });
@@ -107,7 +107,7 @@ export const run = async ({
           inviterName: documentOwner.name || undefined,
           inviterEmail: documentOwner.email,
           assetBaseUrl: NEXT_PUBLIC_WEBAPP_URL(),
-          cancellationReason: cancellationReason || 'The document has been cancelled.',
+          cancellationReason: cancellationReason,
         });
 
         const [html, text] = await Promise.all([
