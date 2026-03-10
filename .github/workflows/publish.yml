@@ -40,6 +40,14 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GH_TOKEN }}
 
+      # Regenerate the lock file with Alpine/musl-native optional dep resolutions
+      # before docker build. The committed lock file originates from Windows.
+      - name: Regenerate package-lock.json for Alpine
+        run: |
+          docker run --rm -v "${{ github.workspace }}:/app" -w /app \
+            node:22-alpine3.22 \
+            sh -c "apk add --no-cache make cmake g++ bash && npm install --legacy-peer-deps"
+
       - name: Build the docker image
         env:
           BUILD_PLATFORM: ${{ matrix.os == 'warp-ubuntu-latest-arm64-4x' && 'arm64' || 'amd64' }}

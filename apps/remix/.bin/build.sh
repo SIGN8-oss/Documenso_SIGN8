@@ -20,7 +20,15 @@ echo "[Build]: Extracting and compiling translations"
 npm run translate --prefix ../../
 
 echo "[Build]: Building app"
-npm run build:app
+# Typecheck is skipped inside Docker (DOCKER_OUTPUT=1) because:
+# - react-router typegen can fail in the pruned monorepo context
+# - type errors are caught earlier in the CI pipeline before docker build runs
+# - skipping saves ~60-90 seconds per Docker build
+if [ -n "$DOCKER_OUTPUT" ]; then
+  cross-env NODE_ENV=production react-router build
+else
+  npm run build:app
+fi
 
 echo "[Build]: Building server"
 npm run build:server
