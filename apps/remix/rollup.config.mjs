@@ -6,6 +6,27 @@ import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 import path from 'node:path';
 
+/**
+ * Rollup plugin that replaces `import.meta.glob(...)` calls with `{}`.
+ * `import.meta.glob` is a Vite-only transform; in the rollup server bundle it would
+ * crash at runtime because `import.meta.glob` is undefined in Node.
+ * Replacing with `{}` lets the filesystem-import fallback in i18n.ts take over.
+ *
+ * @type {import('rollup').Plugin}
+ */
+const stubImportMetaGlob = {
+  name: 'stub-import-meta-glob',
+  transform(code) {
+    if (!code.includes('import.meta.glob')) return null;
+    // Matches: import.meta.glob<GenericType>('pattern') or import.meta.glob('pattern')
+    const result = code.replace(
+      /import\.meta\.glob(?:<[^>]*>)?\s*\(\s*['"\`][^'"\`]+['"\`]\s*,?\s*\)/gs,
+      '{}',
+    );
+    return result !== code ? { code: result, map: null } : null;
+  },
+};
+
 /** @type {import('rollup').RollupOptions} */
 const config = {
   /**
@@ -31,6 +52,7 @@ const config = {
     },
   ],
   plugins: [
+    stubImportMetaGlob,
     typescript({
       noEmitOnError: true,
       moduleResolution: 'bundler',

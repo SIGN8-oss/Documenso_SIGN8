@@ -6,26 +6,53 @@ import type { I18nLocaleData, SupportedLanguageCodes } from '../constants/i18n';
 import { APP_I18N_OPTIONS } from '../constants/i18n';
 import { env } from './env';
 
-export async function getTranslations(locale: string) {
-  const extension = env('NODE_ENV') === 'development' ? 'po' : 'mjs';
+// Statically analyzed by Vite to generate lazy translation chunks for the client build.
+// In the rollup server bundle this call is replaced with {} by the stubImportMetaGlob plugin.
+const translationModules = import.meta.glob<{ messages: Record<string, string> }>(
+  '../translations/*/web.{po,mjs}',
+);
 
+export async function getTranslations(locale: string) {
   // Normalise locale: "de-DE" → "de", "pt-BR" stays "pt-BR"
   const candidates = [locale, locale.split('-')[0]];
 
+  // Vite client path: use the pre-analyzed glob map (non-empty after Vite transform).
+  if (Object.keys(translationModules).length > 0) {
+    for (const candidate of candidates) {
+      for (const ext of ['po', 'mjs']) {
+        const key = `../translations/${candidate}/web.${ext}`;
+
+        if (translationModules[key]) {
+          const mod = await translationModules[key]();
+          return mod.messages;
+        }
+      }
+    }
+
+    for (const ext of ['po', 'mjs']) {
+      const key = `../translations/en/web.${ext}`;
+
+      if (translationModules[key]) {
+        const mod = await translationModules[key]();
+        return mod.messages;
+      }
+    }
+  }
+
+  // Server/rollup path: translationModules is {} (stubbed), load from filesystem.
+  const extension = env('NODE_ENV') === 'development' ? 'po' : 'mjs';
+
   for (const candidate of candidates) {
     try {
-      // @vite-ignore is recognised by Vite to suppress "unknown variable dynamic import" warnings.
-      // rollup (server bundle) handles this as a regular dynamic import.
       const { messages } = await import(
         /* @vite-ignore */ `../translations/${candidate}/web.${extension}`
       );
       return messages;
     } catch {
-      // locale file not found, try next candidate
+      // locale not found, try next candidate
     }
   }
 
-  // Fallback to English
   const { messages } = await import(/* @vite-ignore */ `../translations/en/web.${extension}`);
   return messages;
 }
