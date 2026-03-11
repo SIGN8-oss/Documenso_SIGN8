@@ -103,8 +103,6 @@
   },
   "overrides": {
     "lodash": "4.17.23",
-    "@noble/ciphers": "0.6.0",
-    "@noble/hashes": "1.8.0",
     "pdfjs-dist": "5.4.296",
     "typescript": "5.6.2",
     "zod": "$zod",
