@@ -4,42 +4,30 @@ import type { MacroMessageDescriptor } from '@lingui/core/macro';
 
 import type { I18nLocaleData, SupportedLanguageCodes } from '../constants/i18n';
 import { APP_I18N_OPTIONS } from '../constants/i18n';
-
-// Use import.meta.glob so Vite can statically analyze all translation files.
-// This avoids "Unknown variable dynamic import" errors at runtime.
-const translationModules = import.meta.glob<{ messages: Record<string, string> }>(
-  '../translations/*/web.{po,mjs}',
-);
+import { env } from './env';
 
 export async function getTranslations(locale: string) {
+  const extension = env('NODE_ENV') === 'development' ? 'po' : 'mjs';
+
   // Normalise locale: "de-DE" → "de", "pt-BR" stays "pt-BR"
   const candidates = [locale, locale.split('-')[0]];
 
   for (const candidate of candidates) {
-    // Try both .po (dev) and .mjs (prod) extensions
-    for (const ext of ['po', 'mjs']) {
-      const key = `../translations/${candidate}/web.${ext}`;
-
-      if (translationModules[key]) {
-        const mod = await translationModules[key]();
-        return mod.messages;
-      }
+    try {
+      // @vite-ignore is recognised by Vite to suppress "unknown variable dynamic import" warnings.
+      // rollup (server bundle) handles this as a regular dynamic import.
+      const { messages } = await import(
+        /* @vite-ignore */ `../translations/${candidate}/web.${extension}`
+      );
+      return messages;
+    } catch {
+      // locale file not found, try next candidate
     }
   }
 
   // Fallback to English
-  for (const ext of ['po', 'mjs']) {
-    const key = `../translations/en/web.${ext}`;
-
-    if (translationModules[key]) {
-      const mod = await translationModules[key]();
-      return mod.messages;
-    }
-  }
-
-  throw new Error(
-    `No translation found for locale "${locale}". Available keys: ${Object.keys(translationModules).join(', ')}`,
-  );
+  const { messages } = await import(/* @vite-ignore */ `../translations/en/web.${extension}`);
+  return messages;
 }
 
 export async function dynamicActivate(locale: string) {
