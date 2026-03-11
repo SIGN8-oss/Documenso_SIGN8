@@ -18,7 +18,7 @@ import {
   SignatureLevel,
 } from '@prisma/client';
 import { motion } from 'framer-motion';
-import { GripVerticalIcon, HelpCircleIcon, PlusIcon, SparklesIcon, TrashIcon } from 'lucide-react';
+import { GripVerticalIcon, HelpCircleIcon, PlusIcon, TrashIcon } from 'lucide-react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { useRevalidator, useSearchParams } from 'react-router';
 import { isDeepEqual, prop, sortBy } from 'remeda';
@@ -667,33 +667,11 @@ export const EnvelopeEditorRecipientForm = () => {
     <Card backdropBlur={false} className="border">
       <CardHeader className="flex flex-row justify-between">
         <div>
-          <CardTitle>Recipients</CardTitle>
-          <CardDescription className="mt-1.5">Add recipients to your document</CardDescription>
+          <CardTitle><Trans>Recipients</Trans></CardTitle>
+          <CardDescription className="mt-1.5"><Trans>Add recipients to your document</Trans></CardDescription>
         </div>
 
         <div className="flex flex-row items-center space-x-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                type="button"
-                size="sm"
-                disabled={isSubmitting}
-                onClick={onDetectRecipientsClick}
-              >
-                <SparklesIcon className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-
-            <TooltipContent>
-              {team.preferences.aiFeaturesEnabled ? (
-                <Trans>Detect recipients with AI</Trans>
-              ) : (
-                <Trans>Enable AI detection</Trans>
-              )}
-            </TooltipContent>
-          </Tooltip>
-
           <Button
             variant="outline"
             className="flex flex-row items-center"
