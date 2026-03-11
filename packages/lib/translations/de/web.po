@@ -2173,7 +2173,7 @@ msgstr "Durch die Annahme dieser Anfrage gewähren Sie <0>{teamName}</0> Zugriff
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email.tsx
 msgid "By default, emails are sent through SIGN8's email servers. You can configure your own SMTP server to send emails with your own domain and branding."
-msgstr ""
+msgstr "Standardmäßig werden E-Mails über die E-Mail-Server von SIGN8 gesendet. Sie können Ihren eigenen SMTP-Server konfigurieren, um E-Mails mit Ihrer eigenen Domain und Ihrem Branding zu senden."
 
 #: apps/remix/app/components/dialogs/document-delete-dialog.tsx
 msgid "By deleting this document, the following will occur:"
@@ -2588,7 +2588,7 @@ msgstr "Konfigurieren Sie das Feld {0}"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email.tsx
 msgid "Configure a custom SMTP server to send emails from your organisation."
-msgstr ""
+msgstr "Konfigurieren Sie einen eigenen SMTP-Server, um E-Mails von Ihrer Organisation zu senden."
 
 #: apps/remix/app/components/embed/authoring/configure-document-advanced-settings.tsx
 msgid "Configure additional options and preferences"
@@ -3821,7 +3821,7 @@ msgstr "Dokument abgelehnt"
 #: apps/remix/app/routes/_recipient+/sign.$token+/rejected.tsx
 #: packages/email/template-components/template-document-rejected.tsx
 msgid "Document Rejected"
-msgstr "Dokument Abgelehnt"
+msgstr "Dokument abgelehnt"
 
 #: apps/remix/app/components/general/document/document-edit-form.tsx
 msgid "Document sent"
@@ -4389,7 +4389,7 @@ msgstr "Aktivieren Sie das benutzerdefinierte Branding für alle Dokumente in di
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Enable Custom SMTP"
-msgstr ""
+msgstr "Eigenen SMTP aktivieren"
 
 #: apps/remix/app/components/dialogs/template-direct-link-dialog.tsx
 msgid "Enable direct link signing"
@@ -4454,7 +4454,7 @@ msgstr "Eingeben"
 
 #: apps/remix/app/components/dialogs/folder-create-dialog.tsx
 msgid "Enter a name for your new folder. Folders help you organise your items."
-msgstr "Geben Sie einen Namen für Ihren neuen Ordner ein. Ordner helfen Ihnen, Ihre Dateien zu organisieren."
+msgstr "Geben Sie Ihrem neuen Ordner einen Namen."
 
 #: apps/remix/app/components/forms/subscription-claim-form.tsx
 msgid "Enter claim name"
@@ -8104,6 +8104,10 @@ msgstr "E-Mail über Empfänger-unterschrieben senden"
 msgid "Send recipient signing request email"
 msgstr "E-Mail über Unterzeichnungsanfrage des Empfängers senden"
 
+#: packages/ui/components/document/document-email-checkboxes.tsx
+msgid "Send recipient expired email to the owner"
+msgstr "E-Mail über abgelaufenen Empfänger an den Eigentümer senden"
+
 #: apps/remix/app/components/dialogs/document-resend-dialog.tsx
 #: apps/remix/app/components/dialogs/envelope-redistribute-dialog.tsx
 msgid "Send reminder"
@@ -8493,7 +8497,7 @@ msgstr "Überspringen"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email.tsx
 msgid "SMTP Configuration"
-msgstr ""
+msgstr "SMTP-Konfiguration"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "SMTP Host"
@@ -10535,7 +10539,7 @@ msgstr "Verwenden Sie Ihre Authenticator-App, um einen Code zu generieren"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Use your own SMTP server to send emails from this organisation."
-msgstr ""
+msgstr "Verwenden Sie Ihren eigenen SMTP-Server, um E-Mails von dieser Organisation zu senden."
 
 #: apps/remix/app/components/general/document-signing/document-signing-auth-dialog.tsx
 msgid "Use your passkey for authentication"
@@ -11210,7 +11214,7 @@ msgstr "Wir senden Ihnen einen 6-stelligen Code per E-Mail"
 #: apps/remix/app/components/tables/documents-table-empty-state.tsx
 #: apps/remix/app/routes/_authenticated+/t.$teamUrl+/templates._index.tsx
 msgid "We're all empty"
-msgstr "Wir sind alle leer"
+msgstr "Noch keine Dokumente an Bord"
 
 #: packages/email/template-components/template-document-pending.tsx
 msgid "We're still waiting for other signers to sign this document.<0/>We'll notify you as soon as it's ready."
@@ -11983,7 +11987,7 @@ msgstr "Sie haben noch keine Vorlagen erstellt. Bitte laden Sie eine Datei hoch,
 
 #: apps/remix/app/components/tables/documents-table-empty-state.tsx
 msgid "You have not yet created or received any documents. To create a document please upload one."
-msgstr "Sie haben noch keine Dokumente erstellt oder erhalten. Bitte laden Sie ein Dokument hoch, um eines zu erstellen."
+msgstr "Aktuell finden Sie hier keine erstellten oder empfangenen Dokumente. Laden Sie einfach ein Dokument hoch, um das erste anzulegen."
 
 #: apps/remix/app/components/general/document/document-upload-button-legacy.tsx
 #: apps/remix/app/components/general/envelope/envelope-drop-zone-wrapper.tsx
@@ -12269,11 +12273,11 @@ msgstr "Ihre E-Mail"
 
 #: apps/remix/app/routes/_unauthenticated+/verify-email.$token.tsx
 msgid "Your email has already been confirmed. You can now use all features of SIGN8."
-msgstr ""
+msgstr "Ihre E-Mail-Adresse wurde bereits bestätigt. Sie können jetzt alle Funktionen von SIGN8 nutzen."
 
 #: apps/remix/app/routes/_unauthenticated+/verify-email.$token.tsx
 msgid "Your email has been successfully confirmed! You can now use all features of SIGN8."
-msgstr ""
+msgstr "Ihre E-Mail-Adresse wurde erfolgreich bestätigt! Sie können jetzt alle Funktionen von SIGN8 nutzen."
 
 #. placeholder {0}: teamEmail.team.name
 #. placeholder {1}: teamEmail.team.url

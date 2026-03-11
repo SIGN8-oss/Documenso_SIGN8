@@ -136,7 +136,7 @@ export default function VerifyEmailPage({ loaderData }: Route.ComponentProps) {
       <div className="w-screen max-w-lg px-4">
         <div className="flex w-full items-start">
           <div className="mr-4 mt-1 hidden md:block">
-            <CheckCircle2 className="h-10 w-10 text-teal-500" strokeWidth={2} />
+            <CheckCircle2 className="h-10 w-10" style={{ color: '#1e6568' }} strokeWidth={2} />
           </div>
 
           <div>
@@ -163,7 +163,7 @@ export default function VerifyEmailPage({ loaderData }: Route.ComponentProps) {
       <div className="w-screen max-w-lg px-4">
         <div className="flex w-full items-start">
           <div className="mr-4 mt-1 hidden md:block">
-            <CheckCircle2 className="h-10 w-10 text-teal-500" strokeWidth={2} />
+            <CheckCircle2 className="h-10 w-10" style={{ color: '#1e6568' }} strokeWidth={2} />
           </div>
 
           <div>
