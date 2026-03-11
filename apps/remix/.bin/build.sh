@@ -36,8 +36,11 @@ npm run build:server
 # Copy over the entry point for the server.
 cp server/main.js build/server/main.js
 
-# Copy over all web.js translations
+# Copy over all web.js translations (for rollup hono bundle)
 cp -r ../../packages/lib/translations build/server/hono/packages/lib/translations
+
+# Copy over all web.js translations (for Vite/RR7 server bundle at build/server/assets/)
+cp -r ../../packages/lib/translations build/server/translations
 
 # Time taken
 end_time=$(date +%s)
