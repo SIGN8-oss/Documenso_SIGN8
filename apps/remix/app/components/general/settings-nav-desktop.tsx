@@ -5,6 +5,7 @@ import {
   BracesIcon,
   CreditCardIcon,
   Globe2Icon,
+  InfoIcon,
   Lock,
   Settings2Icon,
   User,
@@ -172,6 +173,19 @@ export const SettingsDesktopNav = ({ className, ...props }: SettingsDesktopNavPr
         >
           <Lock className="mr-2 h-5 w-5" />
           <Trans>Security</Trans>
+        </Button>
+      </Link>
+
+      <Link to="/settings/info">
+        <Button
+          variant="ghost"
+          className={cn(
+            'w-full justify-start',
+            pathname?.startsWith('/settings/info') && 'bg-secondary',
+          )}
+        >
+          <InfoIcon className="mr-2 h-5 w-5" />
+          <Trans>Info</Trans>
         </Button>
       </Link>
     </div>

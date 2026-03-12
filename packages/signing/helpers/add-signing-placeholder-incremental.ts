@@ -1,4 +1,14 @@
-import type { PDFDict, PDFRef } from '@cantoo/pdf-lib';
+import {
+  PDFArray,
+  PDFBool,
+  PDFDict,
+  PDFHexString,
+  PDFName,
+  PDFNull,
+  PDFNumber,
+  PDFRef,
+  PDFString,
+} from '@cantoo/pdf-lib';
 import zlib from 'node:zlib';
 
 import { BYTE_RANGE_PLACEHOLDER } from '../constants/byte-range';
@@ -6,6 +16,7 @@ import type { SignatureFieldPosition } from './add-signing-placeholder';
 import {
   buildIncrementalUpdate,
   findStartXref,
+  formatPdfDate,
   getAnnotRefs,
   getFieldRefs,
   getMaxObjectNumber,
@@ -24,6 +35,7 @@ export type AddSigningPlaceholderIncrementalOptions = {
   signatureFields?: SignatureFieldPosition[];
   appearance?: SignatureAppearance;
   appearances?: SignatureAppearance[];
+  useCadesSubFilter?: boolean;
 };
 
 /**
@@ -41,6 +53,7 @@ export const addSigningPlaceholderIncremental = async ({
   signatureFields,
   appearance,
   appearances,
+  useCadesSubFilter,
 }: AddSigningPlaceholderIncrementalOptions): Promise<Buffer> => {
   const maxObjNum = await getMaxObjectNumber(pdf);
   const prevStartXref = findStartXref(pdf);
@@ -81,15 +94,15 @@ export const addSigningPlaceholderIncremental = async ({
 
   // Build the signature dictionary content
   const byteRangePlaceholder = `[ 0 /${BYTE_RANGE_PLACEHOLDER} /${BYTE_RANGE_PLACEHOLDER} /${BYTE_RANGE_PLACEHOLDER} ]`;
-  // 24576 hex chars = 12288 bytes of signature space (AES/QES CMS signatures can exceed 8KB)
-  const contentsPlaceholder = '<' + '0'.repeat(24576) + '>';
+  // 65536 hex chars = 32768 bytes of signature space (QES CMS with full cert chain + timestamps)
+  const contentsPlaceholder = '<' + '0'.repeat(65536) + '>';
   const dateStr = formatPdfDate(new Date());
 
   const sigContent = [
     '<<',
     '  /Type /Sig',
     '  /Filter /Adobe.PPKLite',
-    '  /SubFilter /adbe.pkcs7.detached',
+    `  /SubFilter ${useCadesSubFilter ? '/ETSI.CAdES.detached' : '/adbe.pkcs7.detached'}`,
     `  /ByteRange ${byteRangePlaceholder}`,
     `  /Contents ${contentsPlaceholder}`,
     '  /Reason (Signed with SIGN8)',
@@ -247,64 +260,11 @@ export const addSigningPlaceholderIncremental = async ({
     objects.push({ objectNumber: widgetObjNum, content: widgetContent });
   }
 
-  // If multiple positions, refactor into parent-kids structure so Adobe counts only 1 signature
-  let acroFormFieldObjNums: number[];
-
-  if (positions.length > 1) {
-    const parentObjNum = nextObj++;
-    const kidsStr = widgetObjNums.map((n) => `${n} 0 R`).join(' ');
-    const parentContent = [
-      '<<',
-      '  /FT /Sig',
-      `  /T (Signature_Org_${Date.now()})`,
-      `  /V ${sigObjNum} 0 R`,
-      `  /Kids [ ${kidsStr} ]`,
-      '>>',
-    ].join('\n');
-    objects.push({ objectNumber: parentObjNum, content: parentContent });
-
-    // Rebuild each widget without /FT, /V, /T — add /Parent instead
-    for (let i = 0; i < positions.length; i++) {
-      const pos = positions[i];
-      const widgetObjNum2 = widgetObjNums[i];
-      const pageIdx = Math.max(0, pos.page - 1);
-      const pageInfo = pageStructures.get(pageIdx)!;
-      const rect = `[ ${pos.x} ${pos.y} ${pos.x + pos.width} ${pos.y + pos.height} ]`;
-
-      // Reconstruct the /AP line from the original widget (image or transparent)
-      let apLine = '';
-      const existingWidget = objects.find((o) => o.objectNumber === widgetObjNum2);
-      if (existingWidget) {
-        const apMatch = existingWidget.content.match(/\/AP << \/N (\d+ 0 R) >>/);
-        if (apMatch) {
-          apLine = `\n  /AP << /N ${apMatch[1]} >>`;
-        }
-      }
-
-      const childContent = [
-        '<<',
-        '  /Type /Annot',
-        '  /Subtype /Widget',
-        `  /Rect ${rect}`,
-        `  /F 4${apLine}`,
-        `  /P ${pageInfo.pageRef.toString()}`,
-        `  /Parent ${parentObjNum} 0 R`,
-        '>>',
-      ].join('\n');
-
-      // Replace existing widget object content
-      const objIdx = objects.findIndex((o) => o.objectNumber === widgetObjNum2);
-      if (objIdx !== -1) {
-        objects[objIdx] = { objectNumber: widgetObjNum2, content: childContent };
-      }
-    }
-
-    // Only parent goes in AcroForm /Fields
-    acroFormFieldObjNums = [parentObjNum];
-  } else {
-    // Single position: widget is the field itself
-    acroFormFieldObjNums = [...widgetObjNums];
-  }
+  // Each widget is a standalone merged Field+Widget object (ISO 32000-1 §12.7.4.5).
+  // Multiple visual positions for one signature = N independent Field+Widget objects,
+  // all sharing the same /V (sig dict) but each with a unique /T name.
+  // No parent-kids hierarchy — validators require exactly one widget per field.
+  const acroFormFieldObjNums: number[] = [...widgetObjNums];
 
   // Update page Annots arrays for each affected page
   for (const pageIdx of uniquePages) {
@@ -375,9 +335,26 @@ export const addSigningPlaceholderIncremental = async ({
 };
 
 /**
+ * Returns true for PDF value types that serialize safely via .toString().
+ * PDFStream/PDFRawStream are NOT subclasses of PDFDict in @cantoo/pdf-lib, so
+ * including PDFDict here is safe and preserves inline dicts like /Resources,
+ * /Group, /MarkInfo, /ViewerPreferences that would otherwise be silently dropped.
+ */
+const isSafeToSerialize = (v: unknown): boolean =>
+  v instanceof PDFRef ||
+  v instanceof PDFName ||
+  v instanceof PDFNumber ||
+  v instanceof PDFString ||
+  v instanceof PDFHexString ||
+  v instanceof PDFArray ||
+  v instanceof PDFBool ||
+  v instanceof PDFDict ||
+  v === PDFNull;
+
+/**
  * Build a modified PDF dictionary string from an existing dict (or create a new one).
  * Keys listed in `replace` are substituted with the given values.
- * All other keys are preserved from the original dict.
+ * All other keys are preserved from the original dict (unsafe value types are skipped).
  */
 const buildModifiedDict = (
   existingDict: PDFDict | null,
@@ -394,6 +371,10 @@ const buildModifiedDict = (
         continue; // Will be added below
       }
 
+      if (!isSafeToSerialize(value)) {
+        continue; // Skip complex types (streams, nested dicts) that can't be safely inlined
+      }
+
       entries.push(`${keyStr} ${value.toString()}`);
     }
   }
@@ -405,18 +386,4 @@ const buildModifiedDict = (
   entries.push('>>');
 
   return entries.join('\n');
-};
-
-/**
- * Format a Date as a PDF date string: D:YYYYMMDDHHmmssZ
- */
-const formatPdfDate = (date: Date): string => {
-  const y = date.getUTCFullYear();
-  const m = String(date.getUTCMonth() + 1).padStart(2, '0');
-  const d = String(date.getUTCDate()).padStart(2, '0');
-  const h = String(date.getUTCHours()).padStart(2, '0');
-  const min = String(date.getUTCMinutes()).padStart(2, '0');
-  const s = String(date.getUTCSeconds()).padStart(2, '0');
-
-  return `D:${y}${m}${d}${h}${min}${s}Z`;
 };

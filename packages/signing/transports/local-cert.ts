@@ -7,11 +7,14 @@ import { signWithP12 } from '@documenso/pdf-sign';
 import type { SignatureFieldPosition } from '../helpers/add-signing-placeholder';
 import { addSigningPlaceholder } from '../helpers/add-signing-placeholder';
 import { addSigningPlaceholderIncremental } from '../helpers/add-signing-placeholder-incremental';
+import type { SignatureAppearance } from '../helpers/add-signing-placeholder-incremental';
 import { updateSigningPlaceholder } from '../helpers/update-signing-placeholder';
 
 export type SignWithLocalCertOptions = {
   pdf: Buffer;
   signatureFields?: SignatureFieldPosition[];
+  useCadesSubFilter?: boolean;
+  appearances?: SignatureAppearance[];
 };
 
 /**
@@ -79,8 +82,16 @@ const signPdfWithCert = (pdfWithPlaceholder: Buffer, byteRange: number[]): Buffe
 /**
  * Standard signing: rewrites the entire PDF (destroys existing signatures).
  */
-export const signWithLocalCert = async ({ pdf, signatureFields }: SignWithLocalCertOptions) => {
-  const pdfWithPlaceholder = await addSigningPlaceholder({ pdf, signatureFields });
+export const signWithLocalCert = async ({
+  pdf,
+  signatureFields,
+  useCadesSubFilter,
+}: SignWithLocalCertOptions) => {
+  const pdfWithPlaceholder = await addSigningPlaceholder({
+    pdf,
+    signatureFields,
+    useCadesSubFilter,
+  });
   const { pdf: updatedPdf, byteRange } = updateSigningPlaceholder({ pdf: pdfWithPlaceholder });
 
   return signPdfWithCert(updatedPdf, byteRange);
@@ -93,8 +104,15 @@ export const signWithLocalCert = async ({ pdf, signatureFields }: SignWithLocalC
 export const signWithLocalCertIncremental = async ({
   pdf,
   signatureFields,
+  useCadesSubFilter,
+  appearances,
 }: SignWithLocalCertOptions) => {
-  const pdfWithPlaceholder = await addSigningPlaceholderIncremental({ pdf, signatureFields });
+  const pdfWithPlaceholder = await addSigningPlaceholderIncremental({
+    pdf,
+    signatureFields,
+    useCadesSubFilter,
+    appearances,
+  });
   const { pdf: updatedPdf, byteRange } = updateSigningPlaceholder({ pdf: pdfWithPlaceholder });
 
   return signPdfWithCert(updatedPdf, byteRange);

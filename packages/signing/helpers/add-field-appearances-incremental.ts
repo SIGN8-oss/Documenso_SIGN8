@@ -5,6 +5,7 @@ import {
   buildIncrementalUpdate,
   findStartXref,
   getAnnotRefs,
+  getFieldRefs,
   getMaxObjectNumber,
   getObjectNumberFromRef,
   parsePdfStructure,
@@ -82,6 +83,9 @@ export const addFieldAppearancesIncremental = async ({
 
   // Track which annotation refs to add to each page
   const pageAnnotRefs = new Map<number, string[]>();
+
+  // Track button widget object numbers for AcroForm registration
+  const allBtnWidgetObjNums: number[] = [];
 
   for (const [pageIdx, pageAppearances] of byPage) {
     const annotRefs: string[] = [];
@@ -170,17 +174,24 @@ export const addFieldAppearancesIncremental = async ({
         stream: apStreamData,
       });
 
-      // Create Stamp annotation
+      // Create Button Widget annotation.
+      // /Stamp is flagged as an unauthorized modification in signed revisions by Adobe and
+      // pyHanko. Using /Widget /FT /Btn (read-only button) is the correct approach per
+      // ISO 32000-1: it registers as a form field addition, which validators allow.
       const pageInfo = pageStructures.get(pageIdx)!;
       const rect = `[ ${app.x} ${app.y} ${app.x + app.width} ${app.y + app.height} ]`;
-      const stampObjNum = nextObj++;
+      const btnObjNum = nextObj++;
+      const fieldName = `Appearance_Btn_${Date.now()}_${btnObjNum}`;
 
       objects.push({
-        objectNumber: stampObjNum,
+        objectNumber: btnObjNum,
         content: [
           '<<',
           '  /Type /Annot',
-          '  /Subtype /Stamp',
+          '  /Subtype /Widget',
+          '  /FT /Btn',
+          `  /T (${fieldName})`,
+          '  /Ff 65536',
           `  /Rect ${rect}`,
           `  /AP << /N ${apFormObjNum} 0 R >>`,
           '  /F 196',
@@ -189,7 +200,8 @@ export const addFieldAppearancesIncremental = async ({
         ].join('\n'),
       });
 
-      annotRefs.push(`${stampObjNum} 0 R`);
+      annotRefs.push(`${btnObjNum} 0 R`);
+      allBtnWidgetObjNums.push(btnObjNum);
     }
 
     pageAnnotRefs.set(pageIdx, annotRefs);
@@ -216,6 +228,59 @@ export const addFieldAppearancesIncremental = async ({
       objectNumber: pageObjNum,
       content: entries.join('\n'),
     });
+  }
+
+  // Register button widget fields in AcroForm so validators treat them as
+  // approved form field additions rather than unauthorized annotations.
+  if (allBtnWidgetObjNums.length > 0) {
+    let acroFormObjNum: number;
+
+    if (firstStructure.acroFormRef) {
+      acroFormObjNum = getObjectNumberFromRef(firstStructure.acroFormRef);
+    } else {
+      acroFormObjNum = nextObj++;
+    }
+
+    const existingFieldRefs = firstStructure.acroFormDict
+      ? getFieldRefs(firstStructure.acroFormDict)
+      : [];
+    const allFieldRefs = [...existingFieldRefs, ...allBtnWidgetObjNums.map((n) => `${n} 0 R`)];
+
+    const acroFormEntries: string[] = ['<<'];
+
+    if (firstStructure.acroFormDict) {
+      for (const [key, value] of firstStructure.acroFormDict.entries()) {
+        const keyStr = key.toString();
+
+        if (keyStr === '/Fields') continue;
+
+        acroFormEntries.push(`${keyStr} ${value.toString()}`);
+      }
+    }
+
+    acroFormEntries.push(`/Fields [ ${allFieldRefs.join(' ')} ]`);
+    acroFormEntries.push('>>');
+
+    objects.push({ objectNumber: acroFormObjNum, content: acroFormEntries.join('\n') });
+
+    // If AcroForm was inline or new, update the catalog to reference it
+    if (!firstStructure.acroFormRef) {
+      const rootObjNum = getObjectNumberFromRef(firstStructure.rootRef);
+      const catalogEntries: string[] = ['<<'];
+
+      for (const [key, value] of firstStructure.catalogDict.entries()) {
+        const keyStr = key.toString();
+
+        if (keyStr === '/AcroForm') continue;
+
+        catalogEntries.push(`${keyStr} ${value.toString()}`);
+      }
+
+      catalogEntries.push(`/AcroForm ${acroFormObjNum} 0 R`);
+      catalogEntries.push('>>');
+
+      objects.push({ objectNumber: rootObjNum, content: catalogEntries.join('\n') });
+    }
   }
 
   const totalObjectCount = nextObj;

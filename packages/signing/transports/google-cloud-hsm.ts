@@ -6,11 +6,14 @@ import { signWithGCloud } from '@documenso/pdf-sign';
 import type { SignatureFieldPosition } from '../helpers/add-signing-placeholder';
 import { addSigningPlaceholder } from '../helpers/add-signing-placeholder';
 import { addSigningPlaceholderIncremental } from '../helpers/add-signing-placeholder-incremental';
+import type { SignatureAppearance } from '../helpers/add-signing-placeholder-incremental';
 import { updateSigningPlaceholder } from '../helpers/update-signing-placeholder';
 
 export type SignWithGoogleCloudHSMOptions = {
   pdf: Buffer;
   signatureFields?: SignatureFieldPosition[];
+  useCadesSubFilter?: boolean;
+  appearances?: SignatureAppearance[];
 };
 
 /**
@@ -97,11 +100,12 @@ const signPdfWithGCloudHSM = (
 export const signWithGoogleCloudHSM = async ({
   pdf,
   signatureFields,
+  useCadesSubFilter,
 }: SignWithGoogleCloudHSMOptions) => {
   const keyPath = ensureGCloudCredentials();
 
   const { pdf: pdfWithPlaceholder, byteRange } = updateSigningPlaceholder({
-    pdf: await addSigningPlaceholder({ pdf, signatureFields }),
+    pdf: await addSigningPlaceholder({ pdf, signatureFields, useCadesSubFilter }),
   });
 
   return signPdfWithGCloudHSM(pdfWithPlaceholder, byteRange, keyPath);
@@ -114,11 +118,18 @@ export const signWithGoogleCloudHSM = async ({
 export const signWithGoogleCloudHSMIncremental = async ({
   pdf,
   signatureFields,
+  useCadesSubFilter,
+  appearances,
 }: SignWithGoogleCloudHSMOptions) => {
   const keyPath = ensureGCloudCredentials();
 
   const { pdf: pdfWithPlaceholder, byteRange } = updateSigningPlaceholder({
-    pdf: await addSigningPlaceholderIncremental({ pdf, signatureFields }),
+    pdf: await addSigningPlaceholderIncremental({
+      pdf,
+      signatureFields,
+      useCadesSubFilter,
+      appearances,
+    }),
   });
 
   return signPdfWithGCloudHSM(pdfWithPlaceholder, byteRange, keyPath);

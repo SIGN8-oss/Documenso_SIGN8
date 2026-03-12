@@ -27,6 +27,59 @@ export const findStartXref = (pdf: Buffer): number => {
 };
 
 /**
+ * Walk the full trailer chain via startxref → /Prev pointers and return the
+ * maximum /Size value found across all trailers. Handles both traditional xref
+ * tables and xref stream objects (PDF 1.5+).
+ *
+ * This replaces the old 2048-byte tail scan which missed /Size values in PDFs
+ * with multiple incremental updates (e.g. QES+AES+SES signing flow).
+ */
+export const parseAllTrailerSizes = (pdf: Buffer): number => {
+  const pdfStr = pdf.toString('latin1');
+  let maxSize = 0;
+
+  let xrefOffset = findStartXref(pdf);
+  const visited = new Set<number>();
+
+  while (xrefOffset >= 0 && !visited.has(xrefOffset)) {
+    visited.add(xrefOffset);
+
+    const atOffset = pdfStr.substring(xrefOffset, xrefOffset + 10).trimStart();
+
+    if (atOffset.startsWith('xref')) {
+      // Traditional xref table — trailer follows after the xref entries
+      const trailerIdx = pdfStr.indexOf('trailer', xrefOffset);
+
+      if (trailerIdx === -1) break;
+
+      // Search for /Size and /Prev within the trailer dict (next ~512 chars)
+      const trailerSnippet = pdfStr.substring(trailerIdx, trailerIdx + 512);
+      const sizeMatch = trailerSnippet.match(/\/Size\s+(\d+)/);
+
+      if (sizeMatch) {
+        maxSize = Math.max(maxSize, parseInt(sizeMatch[1], 10));
+      }
+
+      const prevMatch = trailerSnippet.match(/\/Prev\s+(\d+)/);
+      xrefOffset = prevMatch ? parseInt(prevMatch[1], 10) : -1;
+    } else {
+      // Xref stream object (PDF 1.5+): "N 0 obj << ... /Size ... >>"
+      const objSnippet = pdfStr.substring(xrefOffset, xrefOffset + 2048);
+      const sizeMatch = objSnippet.match(/\/Size\s+(\d+)/);
+
+      if (sizeMatch) {
+        maxSize = Math.max(maxSize, parseInt(sizeMatch[1], 10));
+      }
+
+      const prevMatch = objSnippet.match(/\/Prev\s+(\d+)/);
+      xrefOffset = prevMatch ? parseInt(prevMatch[1], 10) : -1;
+    }
+  }
+
+  return maxSize;
+};
+
+/**
  * Get the highest object number in the PDF (read-only, no save).
  *
  * Uses the trailer /Size value (which equals max object number + 1) as the
@@ -38,13 +91,8 @@ export const findStartXref = (pdf: Buffer): number => {
 export const getMaxObjectNumber = async (pdf: Buffer): Promise<number> => {
   const doc = await PDFDocument.load(pdf);
 
-  // Parse /Size from the last trailer in the raw PDF.
-  // /Size is "one greater than the highest object number defined in the file" (ISO 32000-1 §7.5.5).
-  // Search the last 2048 bytes to find the most recent trailer's /Size.
-  const tail = pdf.subarray(Math.max(0, pdf.length - 2048)).toString('latin1');
-  const sizeMatches = [...tail.matchAll(/\/Size\s+(\d+)/g)];
-  const trailerSize =
-    sizeMatches.length > 0 ? parseInt(sizeMatches[sizeMatches.length - 1][1], 10) : 0;
+  // Walk the full trailer chain for the maximum /Size value
+  const trailerSize = parseAllTrailerSizes(pdf);
 
   return Math.max(doc.context.largestObjectNumber, trailerSize - 1);
 };
@@ -307,4 +355,19 @@ export const getObjectNumberFromRef = (ref: PDFRef | string): number => {
   }
 
   return parseInt(match[1], 10);
+};
+
+/**
+ * Format a Date as a PDF date string with PAdES-compliant timezone format.
+ * Uses `D:YYYYMMDDHHmmss+00'00'` instead of `D:...Z` per ISO 32000-1 §7.9.4.
+ */
+export const formatPdfDate = (date: Date): string => {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(date.getUTCDate()).padStart(2, '0');
+  const h = String(date.getUTCHours()).padStart(2, '0');
+  const min = String(date.getUTCMinutes()).padStart(2, '0');
+  const s = String(date.getUTCSeconds()).padStart(2, '0');
+
+  return `D:${y}${m}${d}${h}${min}${s}+00'00'`;
 };

@@ -566,6 +566,7 @@ const decorateAndSignPdf = async ({
       finalPdf = await signPdfIncremental({
         pdf: qesPdfBuffer,
         signatureFields: sesSignatureFields,
+        useCadesSubFilter: true,
       });
     }
 
@@ -767,7 +768,11 @@ const decorateAndSignPdf = async ({
   }
 
   // Sign with organization certificate
-  const pdfBuffer = await signPdf({ pdf: Buffer.from(pdfBytes), signatureFields });
+  const pdfBuffer = await signPdf({
+    pdf: Buffer.from(pdfBytes),
+    signatureFields,
+    useCadesSubFilter: true,
+  });
 
   const { name } = path.parse(envelopeItem.title);
 

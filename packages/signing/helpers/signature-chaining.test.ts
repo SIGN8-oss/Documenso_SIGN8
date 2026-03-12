@@ -177,8 +177,8 @@ describe('Signature chaining', () => {
       const pdfWithPlaceholder = await addSigningPlaceholderIncremental({ pdf: originalPdf });
       const { pdf: prepared, byteRange } = updateSigningPlaceholder({ pdf: pdfWithPlaceholder });
 
-      // Create a signature larger than the placeholder (24576 hex chars = 12288 bytes)
-      const oversizedCms = Buffer.alloc(13000);
+      // Create a signature larger than the placeholder (65536 hex chars = 32768 bytes)
+      const oversizedCms = Buffer.alloc(33000);
       expect(() =>
         embedSignatureInPdf({ pdf: prepared, signature: oversizedCms, byteRange }),
       ).toThrow('Signature too large');
@@ -244,24 +244,27 @@ describe('Signature chaining', () => {
 
       const appendedSection = result.subarray(originalPdf.length).toString('latin1');
 
-      // With parent-kids: only ONE /FT /Sig (on the parent, not on widgets)
+      // Standalone widgets: each has its own /FT /Sig (N widgets = N /FT /Sig entries)
       const ftMatches = appendedSection.match(/\/FT \/Sig/g);
       expect(ftMatches).not.toBeNull();
-      expect(ftMatches!.length).toBe(1);
+      expect(ftMatches!.length).toBe(2);
 
       // Should contain two /AP appearance entries (one per widget)
       const apMatches = appendedSection.match(/\/AP <</g);
       expect(apMatches).not.toBeNull();
       expect(apMatches!.length).toBe(2);
 
-      // Parent should have /Kids array
-      expect(appendedSection).toContain('/Kids [');
+      // No parent-kids hierarchy
+      expect(appendedSection).not.toContain('/Kids [');
 
-      // Widgets should have /Parent reference (exclude page's /Parent which refs Pages obj)
-      // Count widgets that have /Parent by looking at /Subtype /Widget blocks
+      // Each widget is a standalone Field+Widget with /FT, /V, /T
       const widgetBlocks = appendedSection.split(/\d+ 0 obj/).filter((b) => b.includes('/Subtype /Widget'));
-      const widgetsWithParent = widgetBlocks.filter((b) => b.includes('/Parent'));
-      expect(widgetsWithParent.length).toBe(2);
+      expect(widgetBlocks.length).toBe(2);
+      for (const block of widgetBlocks) {
+        expect(block).toContain('/FT /Sig');
+        expect(block).toContain('/V ');
+        expect(block).toMatch(/\/T \(/);
+      }
 
       // Only ONE /Type /Sig (the signature dictionary is shared)
       const sigMatches = appendedSection.match(/\/Type \/Sig\b/g);
@@ -299,8 +302,8 @@ describe('Signature chaining', () => {
     });
   });
 
-  describe('Parent-kids structure for multi-widget signatures', () => {
-    it('should use parent-kids structure with 2+ positions, producing 1 /FT /Sig', async () => {
+  describe('Standalone Field+Widget structure for multi-widget signatures', () => {
+    it('should use standalone Field+Widget objects with 2+ positions, each having /FT /Sig', async () => {
       const originalPdf = createMinimalPdf();
 
       const result = await addSigningPlaceholderIncremental({
@@ -313,23 +316,22 @@ describe('Signature chaining', () => {
 
       const appended = result.subarray(originalPdf.length).toString('latin1');
 
-      // Only 1 /FT /Sig (on parent field, not on widgets)
+      // Each standalone Field+Widget has its own /FT /Sig
       const ftMatches = appended.match(/\/FT \/Sig/g);
       expect(ftMatches).not.toBeNull();
-      expect(ftMatches!.length).toBe(1);
+      expect(ftMatches!.length).toBe(2);
 
-      // Parent has /Kids array
-      expect(appended).toContain('/Kids [');
+      // No parent-kids hierarchy
+      expect(appended).not.toContain('/Kids [');
 
-      // Each widget has /Parent reference (check within widget blocks, not page /Parent)
+      // Each widget is standalone: has /FT /Sig, /V, and unique /T name
       const widgetBlocks = appended.split(/\d+ 0 obj/).filter((b) => b.includes('/Subtype /Widget'));
       expect(widgetBlocks.length).toBe(2);
       for (const block of widgetBlocks) {
-        expect(block).toContain('/Parent');
-        // Widgets should NOT have /FT, /V, or /T
-        expect(block).not.toContain('/FT /Sig');
-        expect(block).not.toContain('/V ');
-        expect(block).not.toMatch(/\/T \(/);
+        expect(block).toContain('/FT /Sig');
+        expect(block).toContain('/V ');
+        expect(block).toMatch(/\/T \(/);
+        expect(block).not.toContain('/Parent');
       }
     });
 
@@ -356,7 +358,7 @@ describe('Signature chaining', () => {
   });
 
   describe('addFieldAppearancesIncremental', () => {
-    it('should add stamp annotations without modifying page content', async () => {
+    it('should add button widget annotations without modifying page content', async () => {
       const originalPdf = createMinimalPdf();
 
       // Create a small test image
@@ -384,9 +386,10 @@ describe('Signature chaining', () => {
 
       const appended = result.subarray(originalPdf.length).toString('latin1');
 
-      // Should contain stamp annotation (not /Widget)
-      expect(appended).toContain('/Subtype /Stamp');
-      expect(appended).not.toContain('/Subtype /Widget');
+      // Should use /Widget /FT /Btn (not /Stamp — Stamp is flagged in signed revisions)
+      expect(appended).toContain('/Subtype /Widget');
+      expect(appended).toContain('/FT /Btn');
+      expect(appended).not.toContain('/Subtype /Stamp');
 
       // Should have appearance stream
       expect(appended).toContain('/AP <<');
@@ -395,6 +398,9 @@ describe('Signature chaining', () => {
 
       // Should NOT modify page /Contents (which would invalidate CMS)
       expect(appended).not.toContain('/Contents');
+
+      // Button field should be registered in AcroForm
+      expect(appended).toContain('/Fields [');
     });
 
     it('should return pdf unchanged when appearances array is empty', async () => {
@@ -431,10 +437,10 @@ describe('Signature chaining', () => {
 
       const appended = result.subarray(originalPdf.length).toString('latin1');
 
-      // Should have three stamp annotations
-      const stampMatches = appended.match(/\/Subtype \/Stamp/g);
-      expect(stampMatches).not.toBeNull();
-      expect(stampMatches!.length).toBe(3);
+      // Should have three button widget annotations (not stamps)
+      const btnMatches = appended.match(/\/FT \/Btn/g);
+      expect(btnMatches).not.toBeNull();
+      expect(btnMatches!.length).toBe(3);
     });
   });
 });

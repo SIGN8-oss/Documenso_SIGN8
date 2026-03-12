@@ -5,10 +5,12 @@ import {
   PDFHexString,
   PDFName,
   PDFNumber,
+  PDFRef,
   PDFString,
 } from '@cantoo/pdf-lib';
 
 import { BYTE_RANGE_PLACEHOLDER } from '../constants/byte-range';
+import { formatPdfDate, parseAllTrailerSizes } from './incremental-pdf-utils';
 
 export type SignatureFieldPosition = {
   page: number; // 1-indexed page number
@@ -22,13 +24,24 @@ export type AddSigningPlaceholderOptions = {
   pdf: Buffer;
   // Optional signature field positions for clickable areas (multiple widgets)
   signatureFields?: SignatureFieldPosition[];
+  useCadesSubFilter?: boolean;
 };
 
 export const addSigningPlaceholder = async ({
   pdf,
   signatureFields,
+  useCadesSubFilter,
 }: AddSigningPlaceholderOptions) => {
   const doc = await PDFDocument.load(pdf);
+
+  // ObjStm safety: ensure pdf-lib's largestObjectNumber accounts for objects
+  // inside Object Streams (ObjStm, PDF 1.5+) by checking the trailer /Size chain
+  const rawMaxObj = parseAllTrailerSizes(pdf) - 1;
+
+  if (rawMaxObj > doc.context.largestObjectNumber) {
+    doc.context.assign(PDFRef.of(rawMaxObj + 1, 0), doc.context.obj({}));
+  }
+
   const pages = doc.getPages();
 
   // Create ByteRange array with placeholders
@@ -43,11 +56,11 @@ export const addSigningPlaceholder = async ({
     doc.context.obj({
       Type: 'Sig',
       Filter: 'Adobe.PPKLite',
-      SubFilter: 'adbe.pkcs7.detached',
+      SubFilter: useCadesSubFilter ? 'ETSI.CAdES.detached' : 'adbe.pkcs7.detached',
       ByteRange: byteRange,
-      Contents: PDFHexString.fromText(' '.repeat(8192)),
+      Contents: PDFHexString.fromText(' '.repeat(32768)),
       Reason: PDFString.of('Signed with SIGN8'),
-      M: PDFString.fromDate(new Date()),
+      M: PDFString.of(formatPdfDate(new Date())),
     }),
   );
 
@@ -119,12 +132,9 @@ export const addSigningPlaceholder = async ({
     // Add to AcroForm fields
     fields.push(widget);
   } else {
-    // Multiple positions: create parent field with Kids array
-    // Each widget is a child that inherits /FT and /V from the parent
-
-    const kidsArray = PDFArray.withContext(doc.context);
-
-    // Create widget annotations for each position
+    // Multiple positions: create N standalone merged Field+Widget objects per
+    // ISO 32000-1 §12.7.4.5. Each has its own /FT /Sig and unique /T name but all
+    // share the same /V (sig dict). No parent-kids hierarchy.
     for (let i = 0; i < positions.length; i++) {
       const pos = positions[i];
       const pageIndex = pos.page - 1;
@@ -137,19 +147,18 @@ export const addSigningPlaceholder = async ({
         pos.y + pos.height,
       ];
 
-      // Widget annotation - child of the parent field
-      // It only needs Subtype, Rect, P, F - inherits FT and V from Parent
       const widget = doc.context.register(
         doc.context.obj({
           Type: 'Annot',
           Subtype: 'Widget',
+          FT: 'Sig',
           Rect: rect,
-          F: 4, // Print flag
+          V: signature,
+          T: PDFString.of(`Signature${i + 1}`),
+          F: 4,
           P: page.ref,
         }),
       );
-
-      kidsArray.push(widget);
 
       // Add to page annotations
       let pageAnnots: PDFArray;
@@ -160,29 +169,10 @@ export const addSigningPlaceholder = async ({
         page.node.set(PDFName.of('Annots'), pageAnnots);
       }
       pageAnnots.push(widget);
+
+      // Each standalone field goes into AcroForm fields
+      fields.push(widget);
     }
-
-    // Create parent signature field with Kids
-    const parentField = doc.context.register(
-      doc.context.obj({
-        FT: 'Sig',
-        T: PDFString.of('Signature1'),
-        V: signature,
-        Kids: kidsArray,
-      }),
-    );
-
-    // Set Parent reference in each widget
-    for (let i = 0; i < kidsArray.size(); i++) {
-      const widgetRef = kidsArray.get(i);
-      if (widgetRef) {
-        const widgetDict = doc.context.lookup(widgetRef, PDFDict);
-        widgetDict.set(PDFName.of('Parent'), parentField);
-      }
-    }
-
-    // Add parent field to AcroForm fields (NOT the widgets)
-    fields.push(parentField);
   }
 
   acroForm.set(PDFName.of('SigFlags'), PDFNumber.of(3));

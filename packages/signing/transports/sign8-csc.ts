@@ -11,6 +11,7 @@ import { updateSigningPlaceholder } from '../helpers/update-signing-placeholder'
 export type SignWithSign8CSCOptions = {
   pdf: Buffer;
   signatureFields?: SignatureFieldPosition[];
+  useCadesSubFilter?: boolean;
 };
 
 /**
@@ -233,6 +234,7 @@ export const createCMSSignedData = (options: {
 export const signWithSign8CSC = async ({
   pdf,
   signatureFields,
+  useCadesSubFilter,
 }: SignWithSign8CSCOptions): Promise<Buffer> => {
   // Validate required configuration
   const baseUrl = env('NEXT_PRIVATE_SIGNING_SIGN8_BASE_URL');
@@ -258,7 +260,7 @@ export const signWithSign8CSC = async ({
 
   // Prepare PDF with signing placeholder
   const { pdf: pdfWithPlaceholder, byteRange } = updateSigningPlaceholder({
-    pdf: await addSigningPlaceholder({ pdf, signatureFields }),
+    pdf: await addSigningPlaceholder({ pdf, signatureFields, useCadesSubFilter }),
   });
 
   // Extract content to be signed (excluding the signature placeholder)
