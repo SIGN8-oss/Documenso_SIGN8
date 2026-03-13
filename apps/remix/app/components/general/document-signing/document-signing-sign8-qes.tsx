@@ -200,10 +200,17 @@ export const DocumentSigningSign8QES = ({
           </Trans>
         </AlertTitle>
         <AlertDescription className="text-blue-700 dark:text-blue-300">
-          <Trans>
-            This document requires a qualified electronic signature. You will be redirected to Sign8
-            to authenticate with your qualified certificate and sign the document.
-          </Trans>
+          {signatureLevel === SignatureLevel.QES ? (
+            <Trans>
+              This document requires a qualified electronic signature. You will be redirected to
+              Sign8 to authenticate with your qualified certificate and sign the document.
+            </Trans>
+          ) : (
+            <Trans>
+              This document requires an advanced electronic signature. You will be redirected to
+              Sign8 to authenticate with your advanced certificate and sign the document.
+            </Trans>
+          )}
         </AlertDescription>
       </Alert>
 
@@ -247,10 +254,17 @@ export const DocumentSigningSign8QES = ({
         </Button>
 
         <p className="mt-3 text-center text-xs text-muted-foreground">
-          <Trans>
-            You will be redirected to Sign8 to authenticate with your qualified certificate. After
-            authentication, you will be returned here to complete the signing process.
-          </Trans>
+          {signatureLevel === SignatureLevel.QES ? (
+            <Trans>
+              You will be redirected to Sign8 to authenticate with your qualified certificate. After
+              authentication, you will be returned here to complete the signing process.
+            </Trans>
+          ) : (
+            <Trans>
+              You will be redirected to Sign8 to authenticate with your advanced certificate. After
+              authentication, you will be returned here to complete the signing process.
+            </Trans>
+          )}
         </p>
       </div>
     </div>

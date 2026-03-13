@@ -90,8 +90,7 @@ export const sendCompletedEmail = async ({ id, requestMetadata }: SendDocumentOp
       const file = await getFileServerSide(envelopeItem.documentData);
 
       // Use the envelope title for version 1, and the envelope item title for version 2.
-      const fileNameToUse =
-        envelope.internalVersion === 1 ? envelope.title : envelopeItem.title + '.pdf';
+      const fileNameToUse = envelope.internalVersion === 1 ? envelope.title : envelopeItem.title;
 
       return {
         filename: fileNameToUse.endsWith('.pdf') ? fileNameToUse : fileNameToUse + '.pdf',
