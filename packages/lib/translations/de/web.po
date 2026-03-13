@@ -2347,6 +2347,14 @@ msgstr "Zentrum"
 msgid "Change Recipient"
 msgstr "Empfänger ändern"
 
+#: apps/remix/app/components/general/app-command-menu.tsx
+msgid "Change language"
+msgstr "Sprache ändern"
+
+#: apps/remix/app/components/general/app-command-menu.tsx
+msgid "Change theme"
+msgstr "Design ändern"
+
 #: apps/remix/app/components/forms/editor/editor-field-text-form.tsx
 msgid "Character limit"
 msgstr "Zeichenbeschränkung"
