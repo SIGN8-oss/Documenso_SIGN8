@@ -31,6 +31,7 @@ export default defineConfig({
     port: parseInt(process.env.PORT || '3000', 10),
     strictPort: true,
     host: true, // Expose to network
+    allowedHosts: ['sipo.uat.sign8.eu','sipo2.uat.sign8.eu'], 
   },
   plugins: [
     viteStaticCopy({

@@ -543,8 +543,8 @@ msgid "<0>{organisationName}</0> has requested to create an account on your beha
 msgstr "<0>{organisationName}</0> hat angefragt, ein Konto in Ihrem Namen zu erstellen."
 
 #: packages/email/templates/organisation-account-link-confirmation.tsx
-msgid "<0>{organisationName}</0> has requested to link your current SIGN8 account to their organisation."
-msgstr ""
+msgid "<0>{organisationName}</0> has requested to link your current Sign8 account to their organisation."
+msgstr "<0>{organisationName}</0> hat angefragt, Ihr aktuelles Sign8-Konto mit der Organisation zu verknüpfen."
 
 #: apps/remix/app/components/general/document-signing/document-signing-page-view-v1.tsx
 msgid "<0>{senderName} {senderEmail}</0> has invited you to approve this document"
@@ -583,8 +583,8 @@ msgid "<0>{senderName} {senderEmail}</0> on behalf of \"{0}\" has invited you to
 msgstr "<0>{senderName} {senderEmail}</0> im Namen von \"{0}\" hat Sie eingeladen, dieses Dokument anzusehen"
 
 #: packages/email/templates/confirm-team-email.tsx
-msgid "<0>{teamName}</0> has requested to use your email address for their team on SIGN8."
-msgstr ""
+msgid "<0>{teamName}</0> has requested to use your email address for their team on Sign8."
+msgstr "<0>{teamName}</0> hat angefragt, Ihre E-Mail-Adresse für das Team auf Sign8 zu verwenden."
 
 #: apps/remix/app/routes/_unauthenticated+/organisation.sso.confirmation.$token.tsx
 msgid "<0>Account management:</0> Modify your account settings, permissions, and preferences"
@@ -824,8 +824,8 @@ msgid "A means to print or download documents for your records"
 msgstr "Ein Mittel, um Dokumente für Ihre Unterlagen zu drucken oder herunterzuladen"
 
 #: packages/email/templates/organisation-join.tsx
-msgid "A member has joined your organisation on SIGN8"
-msgstr ""
+msgid "A member has joined your organisation on Sign8"
+msgstr "Ein Mitglied ist Ihrer Organisation auf Sign8 beigetreten"
 
 #: packages/lib/jobs/definitions/emails/send-organisation-member-left-email.handler.ts
 msgid "A member has left your organisation"
@@ -836,8 +836,8 @@ msgid "A member has left your organisation {organisationName}"
 msgstr "Ein Mitglied hat Ihre Organisation {organisationName} verlassen"
 
 #: packages/email/templates/organisation-leave.tsx
-msgid "A member has left your organisation on SIGN8"
-msgstr ""
+msgid "A member has left your organisation on Sign8"
+msgstr "Ein Mitglied hat Ihre Organisation auf Sign8 verlassen"
 
 #: packages/lib/jobs/definitions/emails/send-organisation-member-joined-email.handler.ts
 msgid "A new member has joined your organisation"
@@ -880,8 +880,8 @@ msgid "A request has been made to create an account for you"
 msgstr "Es wurde eine Anfrage gestellt, ein Konto für Sie zu erstellen."
 
 #: packages/email/templates/organisation-account-link-confirmation.tsx
-msgid "A request has been made to link your SIGN8 account"
-msgstr ""
+msgid "A request has been made to link your Sign8 account"
+msgstr "Es wurde eine Anfrage gestellt, Ihr Sign8-Konto zu verknüpfen"
 
 #. placeholder {0}: team.name
 #: packages/lib/server-only/team/create-team-email-verification.ts
@@ -938,12 +938,12 @@ msgid "Accept & Link Account"
 msgstr "Akzeptieren & Konto verknüpfen"
 
 #: packages/email/templates/organisation-invite.tsx
-msgid "Accept invitation to join an organisation on SIGN8"
-msgstr ""
+msgid "Accept invitation to join an organisation on Sign8"
+msgstr "Einladung beitreten einer Organisation auf Sign8 annehmen"
 
 #: packages/email/templates/confirm-team-email.tsx
-msgid "Accept team email request for {teamName} on SIGN8"
-msgstr ""
+msgid "Accept team email request for {teamName} on Sign8"
+msgstr "Team-E-Mail-Anfrage für {teamName} auf Sign8 annehmen"
 
 #: apps/remix/app/routes/_unauthenticated+/articles.signature-disclosure.tsx
 msgid "Acceptance and Consent"
@@ -1448,7 +1448,7 @@ msgstr "Fast fertig"
 
 #: apps/remix/app/components/forms/signup.tsx
 msgid "Already have an account? <0>Sign in instead</0>"
-msgstr "Hast du bereits ein Konto? <0>Stattdessen anmelden</0>"
+msgstr "Haben Sie bereits ein Konto? <0>Stattdessen anmelden</0>"
 
 #: apps/remix/app/components/tables/organisation-billing-invoices-table.tsx
 msgid "Amount"
@@ -2173,7 +2173,7 @@ msgstr "Durch die Annahme dieser Anfrage gewähren Sie <0>{teamName}</0> Zugriff
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email.tsx
 msgid "By default, emails are sent through SIGN8's email servers. You can configure your own SMTP server to send emails with your own domain and branding."
-msgstr ""
+msgstr "Standardmäßig werden E-Mails über die E-Mail-Server von SIGN8 gesendet. Sie können Ihren eigenen SMTP-Server konfigurieren, um E-Mails mit Ihrer eigenen Domain und Ihrem Branding zu senden."
 
 #: apps/remix/app/components/dialogs/document-delete-dialog.tsx
 msgid "By deleting this document, the following will occur:"
@@ -2346,6 +2346,14 @@ msgstr "Zentrum"
 #: apps/remix/app/components/general/envelope-editor/envelope-editor-fields-page-renderer.tsx
 msgid "Change Recipient"
 msgstr "Empfänger ändern"
+
+#: apps/remix/app/components/general/app-command-menu.tsx
+msgid "Change language"
+msgstr "Sprache ändern"
+
+#: apps/remix/app/components/general/app-command-menu.tsx
+msgid "Change theme"
+msgstr "Design ändern"
 
 #: apps/remix/app/components/forms/editor/editor-field-text-form.tsx
 msgid "Character limit"
@@ -2588,7 +2596,7 @@ msgstr "Konfigurieren Sie das Feld {0}"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email.tsx
 msgid "Configure a custom SMTP server to send emails from your organisation."
-msgstr ""
+msgstr "Konfigurieren Sie einen eigenen SMTP-Server, um E-Mails von Ihrer Organisation zu senden."
 
 #: apps/remix/app/components/embed/authoring/configure-document-advanced-settings.tsx
 msgid "Configure additional options and preferences"
@@ -3031,11 +3039,11 @@ msgstr "Webhook erstellen"
 
 #: apps/remix/app/routes/_recipient+/sign.$token+/complete.tsx
 msgid "Create your account and start using state-of-the-art document signing."
-msgstr "Erstellen Sie Ihr Konto und beginnen Sie mit dem modernen Dokumentensignieren."
+msgstr "Erstellen Sie jetzt ein Konto und signieren Sie in wenigen Minuten Ihr erstes Dokument."
 
 #: apps/remix/app/components/forms/signup.tsx
 msgid "Create your account and start using state-of-the-art document signing. Open and beautiful signing is within your grasp."
-msgstr "Erstellen Sie Ihr Konto und beginnen Sie mit dem modernen Dokumentensignieren. Offenes und schönes Signieren liegt in Ihrer Reichweite."
+msgstr "Erstellen Sie jetzt ein Konto und signieren Sie in wenigen Minuten Ihr erstes Dokument."
 
 #: apps/remix/app/components/dialogs/public-profile-template-manage-dialog.tsx
 #: apps/remix/app/components/general/document/document-page-view-information.tsx
@@ -3821,7 +3829,7 @@ msgstr "Dokument abgelehnt"
 #: apps/remix/app/routes/_recipient+/sign.$token+/rejected.tsx
 #: packages/email/template-components/template-document-rejected.tsx
 msgid "Document Rejected"
-msgstr "Dokument Abgelehnt"
+msgstr "Dokument abgelehnt"
 
 #: apps/remix/app/components/general/document/document-edit-form.tsx
 msgid "Document sent"
@@ -4389,7 +4397,7 @@ msgstr "Aktivieren Sie das benutzerdefinierte Branding für alle Dokumente in di
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Enable Custom SMTP"
-msgstr ""
+msgstr "Eigenen SMTP aktivieren"
 
 #: apps/remix/app/components/dialogs/template-direct-link-dialog.tsx
 msgid "Enable direct link signing"
@@ -4454,7 +4462,7 @@ msgstr "Eingeben"
 
 #: apps/remix/app/components/dialogs/folder-create-dialog.tsx
 msgid "Enter a name for your new folder. Folders help you organise your items."
-msgstr "Geben Sie einen Namen für Ihren neuen Ordner ein. Ordner helfen Ihnen, Ihre Dateien zu organisieren."
+msgstr "Geben Sie Ihrem neuen Ordner einen Namen."
 
 #: apps/remix/app/components/forms/subscription-claim-form.tsx
 msgid "Enter claim name"
@@ -4988,7 +4996,7 @@ msgstr "Passwort vergessen?"
 #: apps/remix/app/routes/_unauthenticated+/forgot-password.tsx
 #: packages/email/template-components/template-forgot-password.tsx
 msgid "Forgot your password?"
-msgstr "Hast du dein Passwort vergessen?"
+msgstr "Haben Sie Ihr Passwort vergessen?"
 
 #: apps/remix/app/components/dialogs/organisation-create-dialog.tsx
 msgctxt "Plan price"
@@ -5200,7 +5208,7 @@ msgstr "Hier können Sie Branding-Präferenzen für Ihre Organisation festlegen.
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.branding.tsx
 msgid "Here you can set branding preferences for your team."
-msgstr "Hier kannst du die Branding-Einstellungen für dein Team festlegen."
+msgstr "Hier können Sie die Branding-Einstellungen für Ihr Team festlegen."
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.document.tsx
 msgid "Here you can set document preferences for your organisation. Teams will inherit these settings by default."
@@ -5216,11 +5224,11 @@ msgstr "Hier können Sie Präferenzen und Voreinstellungen für Ihr Team festleg
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.branding.tsx
 msgid "Here you can set your general branding preferences."
-msgstr "Hier kannst du deine allgemeinen Branding-Einstellungen festlegen."
+msgstr "Hier können Sie Ihre allgemeinen Branding-Einstellungen festlegen."
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.document.tsx
 msgid "Here you can set your general document preferences."
-msgstr "Hier kannst du deine allgemeinen Dokumenteinstellungen festlegen."
+msgstr "Hier können Sie Ihre allgemeinen Dokumenteinstellungen festlegen."
 
 #: apps/remix/app/components/dialogs/template-direct-link-dialog.tsx
 msgid "Here's how it works:"
@@ -5544,15 +5552,15 @@ msgstr "Es scheint, dass kein Token bereitgestellt wurde. Wenn Sie versuchen, Ih
 
 #: apps/remix/app/components/embed/embed-document-waiting-for-turn.tsx
 msgid "It's currently not your turn to sign. Please check back soon as this document should be available for you to sign shortly."
-msgstr "Es ist momentan nicht Ihre Runde zum Unterschreiben. Bitte schauen Sie bald wieder vorbei, da dieses Dokument bald für Sie zum Unterschreiben verfügbar sein sollte."
+msgstr "Es ist momentan nicht Ihre Reihe zum Unterschreiben. Bitte schauen Sie bald wieder vorbei, da dieses Dokument bald für Sie zum Unterschreiben verfügbar sein sollte."
 
 #: apps/remix/app/routes/_recipient+/sign.$token+/waiting.tsx
 msgid "It's currently not your turn to sign. You will receive an email with instructions once it's your turn to sign the document."
-msgstr "Es ist derzeit nicht deine Reihe zu unterschreiben. Du erhältst eine E-Mail mit Anweisungen, sobald es deine Reihe ist, das Dokument zu unterschreiben."
+msgstr "Es ist derzeit nicht Ihre Reihe zu unterschreiben. Sie erhalten eine E-Mail mit Anweisungen, sobald es Ihre Reihe ist, das Dokument zu unterschreiben."
 
 #: packages/email/templates/organisation-invite.tsx
-msgid "Join {organisationName} on SIGN8"
-msgstr ""
+msgid "Join {organisationName} on Sign8"
+msgstr "{organisationName} auf Sign8 beitreten"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.support.tsx
 msgid "Join our community on <0>Discord</0> for community support and discussion."
@@ -5716,8 +5724,8 @@ msgid "Link template"
 msgstr "Vorlage verlinken"
 
 #: packages/email/templates/organisation-account-link-confirmation.tsx
-msgid "Link your SIGN8 account"
-msgstr ""
+msgid "Link your Sign8 account"
+msgstr "Ihr Sign8-Konto verknüpfen"
 
 #: apps/remix/app/routes/_authenticated+/settings+/security._index.tsx
 #: apps/remix/app/routes/_authenticated+/settings+/security.linked-accounts.tsx
@@ -7174,11 +7182,11 @@ msgstr ""
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 msgid "Qualified Electronic Signature (QES) Required"
-msgstr ""
+msgstr "Qualifizierte Elektronische Signatur (QES) Erforderlich"
 
 #: packages/ui/components/recipient/recipient-signature-level-select.tsx
 msgid "Qualified Electronic Signature: Highest legal standard under eIDAS. The recipient authenticates with Sign8 and signs with their own qualified certificate. Legally equivalent to a handwritten signature."
-msgstr ""
+msgstr "Qualifizierte Elektronische Signatur: Höchster Rechtsstandard gemäß eIDAS. Der Empfänger authentifiziert sich bei Sign8 und unterzeichnet mit seinem eigenen qualifizierten Zertifikat. Rechtlich gleichwertig mit einer handschriftlichen Unterschrift."
 
 #: apps/remix/app/components/general/envelope-editor/envelope-editor.tsx
 msgid "Quick Actions"
@@ -8104,6 +8112,10 @@ msgstr "E-Mail über Empfänger-unterschrieben senden"
 msgid "Send recipient signing request email"
 msgstr "E-Mail über Unterzeichnungsanfrage des Empfängers senden"
 
+#: packages/ui/components/document/document-email-checkboxes.tsx
+msgid "Send recipient expired email to the owner"
+msgstr "E-Mail über abgelaufenen Empfänger an den Eigentümer senden"
+
 #: apps/remix/app/components/dialogs/document-resend-dialog.tsx
 #: apps/remix/app/components/dialogs/envelope-redistribute-dialog.tsx
 msgid "Send reminder"
@@ -8493,7 +8505,7 @@ msgstr "Überspringen"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email.tsx
 msgid "SMTP Configuration"
-msgstr ""
+msgstr "SMTP-Konfiguration"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "SMTP Host"
@@ -8925,8 +8937,8 @@ msgid "Team email removed"
 msgstr "Team-E-Mail entfernt"
 
 #: packages/email/templates/team-email-removed.tsx
-msgid "Team email removed for {teamName} on SIGN8"
-msgstr ""
+msgid "Team email removed for {teamName} on Sign8"
+msgstr "Team-E-Mail für {teamName} auf Sign8 entfernt"
 
 #: apps/remix/app/routes/_unauthenticated+/team.verify.email.$token.tsx
 msgid "Team email verification"
@@ -9706,8 +9718,8 @@ msgid "This document was created using a direct link."
 msgstr "Dieses Dokument wurde mit einem direkten Link erstellt."
 
 #: packages/email/template-components/template-footer.tsx
-msgid "This document was sent using <0>SIGN8</0>."
-msgstr ""
+msgid "This document was sent using <0>Sign8</0>."
+msgstr "Dieses Dokument wurde mit <0>Sign8</0> versendet."
 
 #: apps/remix/app/components/dialogs/envelope-duplicate-dialog.tsx
 msgid "This document will be duplicated."
@@ -10535,7 +10547,7 @@ msgstr "Verwenden Sie Ihre Authenticator-App, um einen Code zu generieren"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Use your own SMTP server to send emails from this organisation."
-msgstr ""
+msgstr "Verwenden Sie Ihren eigenen SMTP-Server, um E-Mails von dieser Organisation zu senden."
 
 #: apps/remix/app/components/general/document-signing/document-signing-auth-dialog.tsx
 msgid "Use your passkey for authentication"
@@ -10856,7 +10868,7 @@ msgstr "Warten auf andere, um zu unterschreiben"
 #: apps/remix/app/components/embed/embed-document-waiting-for-turn.tsx
 #: apps/remix/app/routes/_recipient+/sign.$token+/waiting.tsx
 msgid "Waiting for Your Turn"
-msgstr "Warten auf deine Reihe"
+msgstr "Warten auf Ihre Reihe"
 
 #: apps/remix/app/routes/_recipient+/sign.$token+/_index.tsx
 #: apps/remix/app/routes/_recipient+/sign.$token+/_index.tsx
@@ -11210,7 +11222,7 @@ msgstr "Wir senden Ihnen einen 6-stelligen Code per E-Mail"
 #: apps/remix/app/components/tables/documents-table-empty-state.tsx
 #: apps/remix/app/routes/_authenticated+/t.$teamUrl+/templates._index.tsx
 msgid "We're all empty"
-msgstr "Wir sind alle leer"
+msgstr "Noch keine Dokumente an Bord"
 
 #: packages/email/template-components/template-document-pending.tsx
 msgid "We're still waiting for other signers to sign this document.<0/>We'll notify you as soon as it's ready."
@@ -11275,19 +11287,319 @@ msgstr "Willkommen"
 
 #: apps/remix/app/routes/_unauthenticated+/signin.tsx
 msgid "Welcome back, we are lucky to have you."
-msgstr "Willkommen zurück, wir freuen uns, Sie zu haben."
+msgstr "Willkommen zurück, schön, Sie wieder zu sehen."
 
 #: apps/remix/app/routes/_authenticated+/dashboard.tsx
 msgid "Welcome back! Here's an overview of your account."
 msgstr "Willkommen zurück! Hier ist ein Überblick über Ihr Konto."
 
+#: packages/ui/components/document/expiration-period-picker.tsx
+msgid "Custom duration"
+msgstr "Benutzerdefinierte Dauer"
+
+#: packages/ui/components/document/expiration-period-picker.tsx
+msgid "Never expires"
+msgstr "Läuft nie ab"
+
+#: packages/ui/components/document/expiration-period-picker.tsx
+msgid "Days"
+msgstr "Tage"
+
+#: packages/ui/components/document/expiration-period-picker.tsx
+msgid "Weeks"
+msgstr "Wochen"
+
+#: packages/ui/components/document/expiration-period-picker.tsx
+msgid "Months"
+msgstr "Monate"
+
+#: packages/ui/components/document/expiration-period-picker.tsx
+msgid "Years"
+msgstr "Jahre"
+
 #: apps/remix/app/routes/_unauthenticated+/o.$orgUrl.signin.tsx
 msgid "Welcome to {organisationName}"
 msgstr "Willkommen bei {organisationName}"
 
+#: packages/ui/components/document/expiration-period-picker.tsx
+msgid "Add recipients to your document"
+msgstr "Empfänger zu Ihrem Dokument hinzufügen"
+
+#: packages/ui/components/document/expiration-period-picker.tsx
+msgid "Recipients"
+msgstr "Empfänger"
+
+#: apps/remix/app/components/forms/document-preferences-form.tsx
+msgid "Default Envelope Expiration"
+msgstr "Standard-Ablaufzeit"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You created the document"
+msgstr "Sie haben das Dokument erstellt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} created the document"
+msgstr "{0} hat das Dokument erstellt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You deleted the document"
+msgstr "Sie haben das Dokument gelöscht"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} deleted the document"
+msgstr "{0} hat das Dokument gelöscht"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You sent the document"
+msgstr "Sie haben das Dokument gesendet"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} sent the document"
+msgstr "{0} hat das Dokument gesendet"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You opened the document"
+msgstr "Sie haben das Dokument geöffnet"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} opened the document"
+msgstr "{0} hat das Dokument geöffnet"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You viewed the document"
+msgstr "Sie haben das Dokument angesehen"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} viewed the document"
+msgstr "{0} hat das Dokument angesehen"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You signed the document"
+msgstr "Sie haben das Dokument unterzeichnet"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} signed the document"
+msgstr "{0} hat das Dokument unterzeichnet"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You approved the document"
+msgstr "Sie haben das Dokument genehmigt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} approved the document"
+msgstr "{0} hat das Dokument genehmigt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You rejected the document"
+msgstr "Sie haben das Dokument abgelehnt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} rejected the document"
+msgstr "{0} hat das Dokument abgelehnt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You signed a field"
+msgstr "Sie haben ein Feld ausgefüllt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} signed a field"
+msgstr "{0} hat ein Feld ausgefüllt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You unsigned a field"
+msgstr "Sie haben ein Feld zurückgesetzt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} unsigned a field"
+msgstr "{0} hat ein Feld zurückgesetzt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You added a field"
+msgstr "Sie haben ein Feld hinzugefügt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} added a field"
+msgstr "{0} hat ein Feld hinzugefügt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You removed a field"
+msgstr "Sie haben ein Feld entfernt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} removed a field"
+msgstr "{0} hat ein Feld entfernt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You updated a field"
+msgstr "Sie haben ein Feld aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} updated a field"
+msgstr "{0} hat ein Feld aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You added a recipient"
+msgstr "Sie haben einen Empfänger hinzugefügt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} added a recipient"
+msgstr "{0} hat einen Empfänger hinzugefügt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You removed a recipient"
+msgstr "Sie haben einen Empfänger entfernt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} removed a recipient"
+msgstr "{0} hat einen Empfänger entfernt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You updated a recipient"
+msgstr "Sie haben einen Empfänger aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} updated a recipient"
+msgstr "{0} hat einen Empfänger aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You prefilled a field"
+msgstr "Sie haben ein Feld vorausgefüllt"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You updated the document"
+msgstr "Sie haben das Dokument aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} updated the document"
+msgstr "{0} hat das Dokument aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You updated the document title"
+msgstr "Sie haben den Dokumenttitel aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} updated the document title"
+msgstr "{0} hat den Dokumenttitel aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You updated the document external ID"
+msgstr "Sie haben die externe ID des Dokuments aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} updated the document external ID"
+msgstr "{0} hat die externe ID des Dokuments aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You updated the document visibility"
+msgstr "Sie haben die Sichtbarkeit des Dokuments aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} updated the document visibility"
+msgstr "{0} hat die Sichtbarkeit des Dokuments aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You updated the document access auth requirements"
+msgstr "Sie haben die Zugriffsauthentifizierungsanforderungen des Dokuments aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} updated the document access auth requirements"
+msgstr "{0} hat die Zugriffsauthentifizierungsanforderungen des Dokuments aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You updated the document signing auth requirements"
+msgstr "Sie haben die Unterzeichnungsauthentifizierungsanforderungen des Dokuments aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} updated the document signing auth requirements"
+msgstr "{0} hat die Unterzeichnungsauthentifizierungsanforderungen des Dokuments aktualisiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You moved the document to team"
+msgstr "Sie haben das Dokument ins Team verschoben"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} moved the document to team"
+msgstr "{0} hat das Dokument ins Team verschoben"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You resent an email to {0}"
+msgstr "Sie haben eine E-Mail erneut an {0} gesendet"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} resent an email to {1}"
+msgstr "{0} hat eine E-Mail erneut an {1} gesendet"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You sent an email to {0}"
+msgstr "Sie haben eine E-Mail an {0} gesendet"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} sent an email to {1}"
+msgstr "{0} hat eine E-Mail an {1} gesendet"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You CC'd the document"
+msgstr "Sie wurden im Dokument als CC eingetragen"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} CC'd the document"
+msgstr "{0} wurde im Dokument als CC eingetragen"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You completed your task"
+msgstr "Sie haben Ihre Aufgabe abgeschlossen"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "{0} completed their task"
+msgstr "{0} hat die Aufgabe abgeschlossen"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You requested a 2FA token for the document"
+msgstr "Sie haben einen 2FA-Code für das Dokument angefordert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You validated a 2FA token for the document"
+msgstr "Sie haben einen 2FA-Code für das Dokument validiert"
+
+#: packages/lib/utils/document-audit-logs.ts
+msgid "You failed to validate a 2FA token for the document"
+msgstr "Die Validierung des 2FA-Codes für das Dokument ist fehlgeschlagen"
+
+#: packages/ui/components/document/document-email-checkboxes.tsx
+msgid "Email the owner when a recipient signs"
+msgstr "Eigentümer benachrichtigen, wenn ein Empfänger unterzeichnet"
+
+#: packages/ui/components/document/document-email-checkboxes.tsx
+msgid "Email recipients with a signing request"
+msgstr "Empfänger mit einer Unterzeichnungsaufforderung benachrichtigen"
+
+#: packages/ui/components/document/document-email-checkboxes.tsx
+msgid "Email recipients when they're removed from a pending document"
+msgstr "Empfänger benachrichtigen, wenn sie von einem ausstehenden Dokument entfernt werden"
+
+#: packages/ui/components/document/document-email-checkboxes.tsx
+msgid "Email the signer if the document is still pending"
+msgstr "Unterzeichner benachrichtigen, wenn das Dokument noch aussteht"
+
+#: packages/ui/components/document/document-email-checkboxes.tsx
+msgid "Email recipients when the document is completed"
+msgstr "Empfänger benachrichtigen, wenn das Dokument abgeschlossen ist"
+
+#: packages/ui/components/document/document-email-checkboxes.tsx
+msgid "Email recipients when a pending document is deleted"
+msgstr "Empfänger benachrichtigen, wenn ein ausstehendes Dokument gelöscht wird"
+
+#: packages/ui/components/document/document-email-checkboxes.tsx
+msgid "Email the owner when the document is completed"
+msgstr "Eigentümer benachrichtigen, wenn das Dokument abgeschlossen ist"
+
+#: packages/ui/components/document/document-email-checkboxes.tsx
+msgid "Send recipients expired email to the owner"
+msgstr "Abgelaufene Dokument-E-Mail an den Eigentümer senden"
+
 #: packages/email/template-components/template-confirmation-email.tsx
 msgid "Welcome to SIGN8!"
-msgstr ""
+msgstr "Willkommen bei SIGN8!"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.sso.tsx
 msgid "Well-known URL is required"
@@ -11295,7 +11607,7 @@ msgstr "Bekannte URL ist erforderlich"
 
 #: apps/remix/app/routes/_recipient+/sign.$token+/waiting.tsx
 msgid "Were you trying to edit this document instead?"
-msgstr "Hast du stattdessen versucht, dieses Dokument zu bearbeiten?"
+msgstr "Haben Sie stattdessen versucht, dieses Dokument zu bearbeiten?"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl._index.tsx
 msgid "What you can do with teams:"
@@ -11538,15 +11850,15 @@ msgstr "Sie können den Zugriff so aktivieren, dass alle Organisationsmitglieder
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email.tsx
 #: apps/remix/app/routes/_authenticated+/t.$teamUrl+/settings.email.tsx
 msgid "You can manage your email preferences here."
-msgstr "Du kannst deine E-Mail-Einstellungen hier verwalten."
+msgstr "Sie können Ihre E-Mail-Einstellungen hier verwalten."
 
 #: apps/remix/app/components/general/envelope-editor/envelope-editor-fields-page.tsx
 msgid "You can only detect fields in draft envelopes"
 msgstr "Sie können Felder nur in Entwürfen von Umschlägen erkennen."
 
 #: packages/email/templates/confirm-team-email.tsx
-msgid "You can revoke access at any time in your team settings on SIGN8 <0>here</0>."
-msgstr ""
+msgid "You can revoke access at any time in your team settings on Sign8 <0>here</0>."
+msgstr "Sie können den Zugriff jederzeit in Ihren Team-Einstellungen auf Sign8 <0>hier</0> widerrufen."
 
 #: apps/remix/app/components/forms/public-profile-form.tsx
 msgid "You can update the profile URL by updating the team URL in the general settings page."
@@ -11647,7 +11959,7 @@ msgstr "Sie wurden von <0>{0}</0> eingeladen, deren Organisation beizutreten."
 #. placeholder {0}: organisation.name
 #: packages/lib/server-only/organisation/create-organisation-member-invites.ts
 msgid "You have been invited to join {0} on SIGN8"
-msgstr ""
+msgstr "Sie wurden eingeladen, {0} auf SIGN8 beizutreten"
 
 #: packages/email/templates/organisation-invite.tsx
 msgid "You have been invited to join the following organisation"
@@ -11683,7 +11995,7 @@ msgstr "Sie haben noch keine Vorlagen erstellt. Bitte laden Sie eine Datei hoch,
 
 #: apps/remix/app/components/tables/documents-table-empty-state.tsx
 msgid "You have not yet created or received any documents. To create a document please upload one."
-msgstr "Sie haben noch keine Dokumente erstellt oder erhalten. Bitte laden Sie ein Dokument hoch, um eines zu erstellen."
+msgstr "Aktuell finden Sie hier keine erstellten oder empfangenen Dokumente. Laden Sie einfach ein Dokument hoch, um das erste anzulegen."
 
 #: apps/remix/app/components/general/document/document-upload-button-legacy.tsx
 #: apps/remix/app/components/general/envelope/envelope-drop-zone-wrapper.tsx
@@ -11969,11 +12281,11 @@ msgstr "Ihre E-Mail"
 
 #: apps/remix/app/routes/_unauthenticated+/verify-email.$token.tsx
 msgid "Your email has already been confirmed. You can now use all features of SIGN8."
-msgstr ""
+msgstr "Ihre E-Mail-Adresse wurde bereits bestätigt. Sie können jetzt alle Funktionen von SIGN8 nutzen."
 
 #: apps/remix/app/routes/_unauthenticated+/verify-email.$token.tsx
 msgid "Your email has been successfully confirmed! You can now use all features of SIGN8."
-msgstr ""
+msgstr "Ihre E-Mail-Adresse wurde erfolgreich bestätigt! Sie können jetzt alle Funktionen von SIGN8 nutzen."
 
 #. placeholder {0}: teamEmail.team.name
 #. placeholder {1}: teamEmail.team.url

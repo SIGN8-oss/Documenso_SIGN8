@@ -4,9 +4,10 @@ import type { MacroMessageDescriptor } from '@lingui/core/macro';
 
 import type { I18nLocaleData, SupportedLanguageCodes } from '../constants/i18n';
 import { APP_I18N_OPTIONS } from '../constants/i18n';
+import { env } from './env';
 
-// Use import.meta.glob so Vite can statically analyze all translation files.
-// This avoids "Unknown variable dynamic import" errors at runtime.
+// Statically analyzed by Vite to generate lazy translation chunks for the client build.
+// In the rollup server bundle this call is replaced with {} by the stubImportMetaGlob plugin.
 const translationModules = import.meta.glob<{ messages: Record<string, string> }>(
   '../translations/*/web.{po,mjs}',
 );
@@ -15,10 +16,21 @@ export async function getTranslations(locale: string) {
   // Normalise locale: "de-DE" → "de", "pt-BR" stays "pt-BR"
   const candidates = [locale, locale.split('-')[0]];
 
-  for (const candidate of candidates) {
-    // Try both .po (dev) and .mjs (prod) extensions
+  // Vite client path: use the pre-analyzed glob map (non-empty after Vite transform).
+  if (Object.keys(translationModules).length > 0) {
+    for (const candidate of candidates) {
+      for (const ext of ['po', 'mjs']) {
+        const key = `../translations/${candidate}/web.${ext}`;
+
+        if (translationModules[key]) {
+          const mod = await translationModules[key]();
+          return mod.messages;
+        }
+      }
+    }
+
     for (const ext of ['po', 'mjs']) {
-      const key = `../translations/${candidate}/web.${ext}`;
+      const key = `../translations/en/web.${ext}`;
 
       if (translationModules[key]) {
         const mod = await translationModules[key]();
@@ -27,19 +39,22 @@ export async function getTranslations(locale: string) {
     }
   }
 
-  // Fallback to English
-  for (const ext of ['po', 'mjs']) {
-    const key = `../translations/en/web.${ext}`;
+  // Server/rollup path: translationModules is {} (stubbed), load from filesystem.
+  const extension = env('NODE_ENV') === 'development' ? 'po' : 'mjs';
 
-    if (translationModules[key]) {
-      const mod = await translationModules[key]();
-      return mod.messages;
+  for (const candidate of candidates) {
+    try {
+      const { messages } = await import(
+        /* @vite-ignore */ `../translations/${candidate}/web.${extension}`
+      );
+      return messages;
+    } catch {
+      // locale not found, try next candidate
     }
   }
 
-  throw new Error(
-    `No translation found for locale "${locale}". Available keys: ${Object.keys(translationModules).join(', ')}`,
-  );
+  const { messages } = await import(/* @vite-ignore */ `../translations/en/web.${extension}`);
+  return messages;
 }
 
 export async function dynamicActivate(locale: string) {

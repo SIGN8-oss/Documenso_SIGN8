@@ -1,3 +1,4 @@
+import { PDF } from '@libpdf/core';
 import {
   PDFDocument,
   RotationTypes,
@@ -209,7 +210,9 @@ export const run = async ({
             documentId,
             language: envelope.documentMeta.language,
           }).then(async (buffer) => PDFDocument.load(buffer))
-        : await generateCertificatePdf(certificatePayload);
+        : await generateCertificatePdf(certificatePayload).then(async (pdf) =>
+            PDFDocument.load(await pdf.save()),
+          );
     }
 
     const newDocumentData: Array<{ oldDocumentDataId: string; newDocumentDataId: string }> = [];
@@ -600,7 +603,11 @@ const decorateAndSignPdf = async ({
 
   // Add rejection stamp if the document is rejected
   if (isRejected && rejectionReason) {
-    await addRejectionStampToPdf(pdfDoc, rejectionReason);
+    const stampedPdf = await addRejectionStampToPdf(
+      await PDF.load(new Uint8Array(await pdfDoc.save())),
+      rejectionReason,
+    );
+    pdfDoc = await PDFDocument.load(await stampedPdf.save());
   }
 
   if (certificateDoc) {

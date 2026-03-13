@@ -16,7 +16,7 @@ export const SignatureRender = ({ className, value }: SignatureRenderProps) => {
   const $el = useRef<HTMLCanvasElement>(null);
   const $imageData = useRef<ImageData | null>(null);
 
-  const renderTypedSignature = () => {
+  const renderTypedSignature = async () => {
     if (!$el.current) {
       return;
     }
@@ -32,6 +32,11 @@ export const SignatureRender = ({ className, value }: SignatureRenderProps) => {
     const canvasWidth = $el.current.width;
     const canvasHeight = $el.current.height;
     const fontFamily = 'Caveat';
+
+    // Ensure the custom font is loaded before measuring/rendering on the canvas,
+    // otherwise the browser silently falls back to the default font, causing
+    // incorrect text metrics and a broken typed signature.
+    await document.fonts.load(`18px ${fontFamily}`);
 
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     ctx.textAlign = 'center';
@@ -114,7 +119,7 @@ export const SignatureRender = ({ className, value }: SignatureRenderProps) => {
     if (isBase64Image(value)) {
       renderImageSignature();
     } else {
-      renderTypedSignature();
+      void renderTypedSignature();
     }
   }, [value]);
 

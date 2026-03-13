@@ -9,6 +9,7 @@ import { parseMessageDescriptor } from '@documenso/lib/utils/i18n';
 import { Dialog, DialogClose, DialogContent, DialogFooter } from '@documenso/ui/primitives/dialog';
 
 import { cn } from '../../lib/utils';
+import { useHydrated } from '../../lib/use-hydrated';
 import { Button } from '../button';
 import { SignaturePad } from './signature-pad';
 import { SignatureRender } from './signature-render';
@@ -38,6 +39,7 @@ export const SignaturePadDialog = ({
   dialogConfirmText,
 }: SignaturePadDialogProps) => {
   const { i18n } = useLingui();
+  const isHydrated = useHydrated();
 
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [signature, setSignature] = useState<string>(value ?? '');
@@ -93,7 +95,7 @@ export const SignaturePadDialog = ({
               strokeWidth="1.1"
               strokeLinecap="round"
               strokeLinejoin="round"
-              initial={{ pathLength: 0, opacity: 0 }}
+              initial={{ pathLength: isHydrated ? 0 : 1, opacity: isHydrated ? 0 : 1 }}
               animate={{
                 pathLength: 1,
                 opacity: 1,

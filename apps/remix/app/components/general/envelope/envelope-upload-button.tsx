@@ -12,6 +12,7 @@ import { useLimits } from '@documenso/ee/server-only/limits/provider/client';
 import { useCurrentOrganisation } from '@documenso/lib/client-only/providers/organisation';
 import { useSession } from '@documenso/lib/client-only/providers/session';
 import { APP_DOCUMENT_UPLOAD_SIZE_LIMIT } from '@documenso/lib/constants/app';
+import { isValidLanguageCode } from '@documenso/lib/constants/i18n';
 import { TIME_ZONES } from '@documenso/lib/constants/time-zones';
 import { AppError, AppErrorCode } from '@documenso/lib/errors/app-error';
 import { formatDocumentsPath, formatTemplatesPath } from '@documenso/lib/utils/teams';
@@ -39,7 +40,7 @@ export type EnvelopeUploadButtonProps = {
  * Upload an envelope
  */
 export const EnvelopeUploadButton = ({ className, type, folderId }: EnvelopeUploadButtonProps) => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
   const { toast } = useToast();
   const { user } = useSession();
 
@@ -84,6 +85,7 @@ export const EnvelopeUploadButton = ({ className, type, folderId }: EnvelopeUplo
         title: files[0].name,
         meta: {
           timezone: userTimezone,
+          language: isValidLanguageCode(i18n.locale) ? i18n.locale : undefined,
         },
       } satisfies TCreateEnvelopePayload;
 
