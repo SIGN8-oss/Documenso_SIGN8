@@ -84,12 +84,12 @@ export default function SettingsInfo() {
             </Trans>
           </p>
           <a
-            href="https://github.com/your-org/sipo"
+            href="https://github.com/SIGN8-oss/Documenso_SIGN8"
             target="_blank"
             rel="noopener noreferrer"
             className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:underline"
           >
-            github.com/your-org/sipo
+            github.com/SIGN8-oss/Documenso_SIGN8
             <ExternalLinkIcon className="h-3 w-3" />
           </a>
         </section>

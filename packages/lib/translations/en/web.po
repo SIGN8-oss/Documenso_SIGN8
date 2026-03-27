@@ -12140,3 +12140,51 @@ msgstr "Your verification code:"
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.sso.tsx
 msgid "your-domain.com another-domain.com"
 msgstr "your-domain.com another-domain.com"
+
+#: apps/remix/app/routes/_authenticated+/settings+/info.tsx
+msgid "About SIPO"
+msgstr "About SIPO"
+
+#: apps/remix/app/routes/_authenticated+/settings+/info.tsx
+msgid "About SIPO and open-source license information."
+msgstr "About SIPO and open-source license information."
+
+#: apps/remix/app/routes/_authenticated+/settings+/info.tsx
+msgid "Documenso Attribution"
+msgstr "Documenso Attribution"
+
+#: apps/remix/app/routes/_authenticated+/settings+/info.tsx
+msgid "Full License Text"
+msgstr "Full License Text"
+
+#: apps/remix/app/routes/_authenticated+/settings+/info.tsx
+msgid "Info"
+msgstr "Info"
+
+#: apps/remix/app/routes/_authenticated+/settings+/info.tsx
+msgid "Open Source License"
+msgstr "Open Source License"
+
+#: apps/remix/app/routes/_authenticated+/settings+/info.tsx
+msgid "SIPO Source Code"
+msgstr "SIPO Source Code"
+
+#: apps/remix/app/routes/_authenticated+/settings+/info.tsx
+msgid "SIPO is a document signing platform built on open-source technology. It provides qualified electronic signatures (QES), advanced electronic signatures (AES), and simple electronic signatures (SES) for secure and legally binding document workflows."
+msgstr "SIPO is a document signing platform built on open-source technology. It provides qualified electronic signatures (QES), advanced electronic signatures (AES), and simple electronic signatures (SES) for secure and legally binding document workflows."
+
+#: apps/remix/app/routes/_authenticated+/settings+/info.tsx
+msgid "SIPO is a fork of Documenso, an open-source document signing platform licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). In accordance with the terms of the AGPL-3.0, the source code of SIPO is made available to all users."
+msgstr "SIPO is a fork of Documenso, an open-source document signing platform licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). In accordance with the terms of the AGPL-3.0, the source code of SIPO is made available to all users."
+
+#: apps/remix/app/routes/_authenticated+/settings+/info.tsx
+msgid "The complete source code of SIPO is available on GitHub under the AGPL-3.0 license."
+msgstr "The complete source code of SIPO is available on GitHub under the AGPL-3.0 license."
+
+#: apps/remix/app/routes/_authenticated+/settings+/info.tsx
+msgid "This software is based on Documenso, created and maintained by the Documenso community."
+msgstr "This software is based on Documenso, created and maintained by the Documenso community."
+
+#: apps/remix/app/routes/_authenticated+/settings+/info.tsx
+msgid "You can read the full text of the GNU Affero General Public License v3.0 at the following link."
+msgstr "You can read the full text of the GNU Affero General Public License v3.0 at the following link."
