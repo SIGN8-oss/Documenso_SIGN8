@@ -12,7 +12,7 @@ type SetupTwoFactorAuthenticationOptions = {
   user: Pick<User, 'id' | 'email'>;
 };
 
-const ISSUER = 'Documenso';
+const ISSUER = process.env.NEXT_PUBLIC_2FA_ISSUER || 'SIGN8';
 
 export const setupTwoFactorAuthentication = async ({
   user,

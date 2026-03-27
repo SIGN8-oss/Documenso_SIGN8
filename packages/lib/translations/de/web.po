@@ -853,7 +853,7 @@ msgstr "Ein neuer Token wurde erfolgreich erstellt."
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "A password is currently configured. Enter a new one to change it."
-msgstr ""
+msgstr "Ein Passwort ist derzeit konfiguriert. Geben Sie ein neues ein, um es zu ändern."
 
 #: apps/remix/app/components/forms/forgot-password.tsx
 #: apps/remix/app/routes/_unauthenticated+/check-email.tsx
@@ -883,15 +883,63 @@ msgstr "Es wurde eine Anfrage gestellt, ein Konto für Sie zu erstellen."
 msgid "A request has been made to link your Sign8 account"
 msgstr "Es wurde eine Anfrage gestellt, Ihr Sign8-Konto zu verknüpfen"
 
+#: packages/email/templates/organisation-account-link-confirmation.tsx
+msgid "A request has been made to link your SIGN8 account"
+msgstr "Es wurde eine Anfrage gestellt, Ihr SIGN8-Konto zu verknüpfen"
+
+#: packages/email/templates/organisation-account-link-confirmation.tsx
+msgid "<0>{organisationName}</0> has requested to link your current SIGN8 account to their organisation."
+msgstr "<0>{organisationName}</0> hat darum gebeten, Ihr aktuelles SIGN8-Konto mit deren Organisation zu verknüpfen."
+
+#: packages/email/templates/confirm-team-email.tsx
+msgid "<0>{teamName}</0> has requested to use your email address for their team on SIGN8."
+msgstr "<0>{teamName}</0> hat darum gebeten, Ihre E-Mail-Adresse für das Team auf SIGN8 zu verwenden."
+
+#: packages/email/templates/organisation-join.tsx
+msgid "A member has joined your organisation on SIGN8"
+msgstr "Ein Mitglied ist Ihrer Organisation auf SIGN8 beigetreten"
+
+#: packages/email/templates/organisation-leave.tsx
+msgid "A member has left your organisation on SIGN8"
+msgstr "Ein Mitglied hat Ihre Organisation auf SIGN8 verlassen"
+
+#: packages/email/templates/organisation-invite.tsx
+msgid "Accept invitation to join an organisation on SIGN8"
+msgstr "Einladung annehmen, einer Organisation auf SIGN8 beizutreten"
+
+#: packages/email/templates/confirm-team-email.tsx
+msgid "Accept team email request for {teamName} on SIGN8"
+msgstr "Team-E-Mail-Anfrage für {teamName} auf SIGN8 annehmen"
+
+#: packages/email/templates/organisation-invite.tsx
+msgid "Join {organisationName} on SIGN8"
+msgstr "{organisationName} auf SIGN8 beitreten"
+
+#: packages/email/templates/organisation-account-link-confirmation.tsx
+msgid "Link your SIGN8 account"
+msgstr "Ihr SIGN8-Konto verknüpfen"
+
+#: packages/email/templates/team-email-removed.tsx
+msgid "Team email removed for {teamName} on SIGN8"
+msgstr "Team-E-Mail für {teamName} auf SIGN8 entfernt"
+
+#: packages/email/template-components/template-footer.tsx
+msgid "This document was sent using <0>SIGN8</0>."
+msgstr "Dieses Dokument wurde mit <0>SIGN8</0> gesendet."
+
+#: packages/email/templates/confirm-team-email.tsx
+msgid "You can revoke access at any time in your team settings on SIGN8 <0>here</0>."
+msgstr "Sie können den Zugriff jederzeit in Ihren Teameinstellungen auf SIGN8 <0>hier</0> widerrufen."
+
 #. placeholder {0}: team.name
 #: packages/lib/server-only/team/create-team-email-verification.ts
 msgid "A request to use your email has been initiated by {0} on Documenso"
-msgstr "Eine Anfrage zur Verwendung Ihrer E-Mail wurde von {0} auf Documenso initiiert"
+msgstr "Eine Anfrage zur Verwendung Ihrer E-Mail wurde von {0} auf SIGN8 initiiert"
 
 #: apps/remix/app/components/dialogs/webhook-create-dialog.tsx
 #: apps/remix/app/components/dialogs/webhook-edit-dialog.tsx
 msgid "A secret that will be sent to your URL so you can verify that the request has been sent by SIGN8."
-msgstr ""
+msgstr "Ein geheimes Token, das an Ihre URL gesendet wird, damit Sie die Anfrage als von SIGN8 stammend verifizieren können."
 
 #: apps/remix/app/routes/_unauthenticated+/articles.signature-disclosure.tsx
 msgid "A stable internet connection"
@@ -904,7 +952,7 @@ msgstr "Ein Team, dem du angehörtest, wurde gelöscht"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "A test email has been sent to {testEmail}."
-msgstr ""
+msgstr "Eine Test-E-Mail wurde an {testEmail} gesendet."
 
 #: apps/remix/app/components/forms/public-profile-form.tsx
 msgid "A unique URL to access your profile"
@@ -1306,11 +1354,11 @@ msgstr "Nur Admins"
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 msgid "Advanced Electronic Signature (AES) Required"
-msgstr ""
+msgstr "Fortgeschrittene elektronische Signatur (FES) erforderlich"
 
 #: packages/ui/components/recipient/recipient-signature-level-select.tsx
 msgid "Advanced Electronic Signature: Enhanced authentication with 2FA or passkey. Uniquely linked to the signatory and suitable for business contracts."
-msgstr ""
+msgstr "Fortgeschrittene elektronische Signatur: Erweiterte Authentifizierung mit 2FA oder Passkey. Eindeutig mit dem Unterzeichner verknüpft und geeignet für Geschäftsverträge."
 
 #: packages/ui/primitives/document-flow/add-settings.tsx
 #: packages/ui/primitives/template-flow/add-template-settings.tsx
@@ -1330,7 +1378,7 @@ msgstr "Erweiterte Einstellungen"
 
 #: packages/ui/components/recipient/recipient-signature-level-select.tsx
 msgid "AES (Advanced)"
-msgstr ""
+msgstr "FES (Fortgeschritten)"
 
 #: apps/remix/app/routes/_unauthenticated+/articles.signature-disclosure.tsx
 msgid "After signing a document electronically, you will be provided the opportunity to view, download, and print the document for your records. It is highly recommended that you retain a copy of all electronically signed documents for your personal records. We will also retain a copy of the signed document for our records however we may not be able to provide you with a copy of the signed document after a certain period of time."
@@ -1460,7 +1508,7 @@ msgstr "Ein Administrator hat dein Dokument \"{documentName}\" gelöscht."
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "An API key is currently configured. Enter a new one to change it."
-msgstr ""
+msgstr "Ein API-Schlüssel ist derzeit konfiguriert. Geben Sie einen neuen ein, um ihn zu ändern."
 
 #: apps/remix/app/routes/_unauthenticated+/articles.signature-disclosure.tsx
 msgid "An electronic signature provided by you on our platform, achieved through clicking through to a document and entering your name, or any other electronic signing method we provide, is legally binding. It carries the same weight and enforceability as a manual signature written with ink on paper."
@@ -1758,7 +1806,7 @@ msgstr "Ein unbekannter Fehler ist beim Verschieben des Ordners aufgetreten."
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 msgid "An unknown error occurred."
-msgstr ""
+msgstr "Ein unbekannter Fehler ist aufgetreten."
 
 #: apps/remix/app/components/dialogs/ai-field-detection-dialog.tsx
 msgid "Analyzing page layout"
@@ -1782,11 +1830,11 @@ msgstr "Jeder Status"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "API Key"
-msgstr ""
+msgstr "API-Schlüssel"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "API Key User"
-msgstr ""
+msgstr "API-Schlüssel-Benutzer"
 
 #: apps/remix/app/components/general/settings-nav-desktop.tsx
 #: apps/remix/app/components/general/settings-nav-mobile.tsx
@@ -1801,7 +1849,7 @@ msgstr "App-Version"
 
 #: apps/remix/app/components/general/document-signing/sign8-completion-overlay.tsx
 msgid "Applying Signature"
-msgstr ""
+msgstr "Signatur wird angewendet"
 
 #: apps/remix/app/components/general/document-signing/document-signing-complete-dialog.tsx
 #: apps/remix/app/components/general/document-signing/document-signing-complete-dialog.tsx
@@ -1993,7 +2041,7 @@ msgstr "Audit-Protokoll"
 
 #: apps/remix/app/components/tables/admin-document-logs-table.tsx
 msgid "Audit Log Details"
-msgstr ""
+msgstr "Audit-Log-Details"
 
 #: apps/remix/app/components/general/document/document-page-view-dropdown.tsx
 #: apps/remix/app/routes/_authenticated+/admin+/documents.$id.tsx
@@ -2020,7 +2068,7 @@ msgstr "Authenticator-App"
 
 #: apps/remix/app/components/forms/email-template-form.tsx
 msgid "Available Variables"
-msgstr ""
+msgstr "Verfügbare Variablen"
 
 #: apps/remix/app/components/forms/avatar-image.tsx
 msgid "Avatar"
@@ -2090,7 +2138,7 @@ msgstr "Blau"
 
 #: apps/remix/app/components/forms/email-template-form.tsx
 msgid "Body"
-msgstr ""
+msgstr "Inhalt"
 
 #: apps/remix/app/components/forms/editor/editor-field-generic-field-forms.tsx
 msgid "Bottom"
@@ -2185,7 +2233,7 @@ msgstr "Wenn 2FA aktiviert wird, müssen Sie bei jedem Anmelden mit E-Mail-Passw
 
 #: apps/remix/app/routes/_unauthenticated+/articles.signature-disclosure.tsx
 msgid "By proceeding to use the electronic signature service provided by SIGN8, you affirm that you have read and understood this disclosure. You agree to all terms and conditions related to the use of electronic signatures and electronic transactions as outlined herein."
-msgstr ""
+msgstr "Indem Sie den von SIGN8 bereitgestellten elektronischen Signaturservice nutzen, bestätigen Sie, dass Sie diese Offenlegung gelesen und verstanden haben. Sie stimmen allen Bedingungen zur Nutzung elektronischer Signaturen und elektronischer Transaktionen wie hierin beschrieben zu."
 
 #: apps/remix/app/components/general/document-signing/document-signing-disclosure.tsx
 msgid "By proceeding with your electronic signature, you acknowledge and consent that it will be used to sign the given document and holds the same legal validity as a handwritten signature. By completing the electronic signing process, you affirm your understanding and acceptance of these conditions."
@@ -2408,7 +2456,7 @@ msgstr "Wählen Sie, wie das Dokument die Empfänger erreichen soll"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Choose how to authenticate with your SMTP server."
-msgstr ""
+msgstr "Wählen Sie aus, wie Sie sich bei Ihrem SMTP-Server authentifizieren möchten."
 
 #: apps/remix/app/components/embed/authoring/configure-document-advanced-settings.tsx
 msgid "Choose how to distribute your document to recipients. Email will send notifications, None will generate signing links for manual distribution."
@@ -2444,7 +2492,7 @@ msgstr "Unterschrift löschen"
 
 #: apps/remix/app/components/forms/email-template-form.tsx
 msgid "Click a variable to insert it at the cursor position."
-msgstr ""
+msgstr "Klicken Sie auf eine Variable, um sie an der Cursorposition einzufügen."
 
 #: apps/remix/app/components/tables/settings-public-profile-templates-table.tsx
 msgid "Click here to get started"
@@ -2581,7 +2629,7 @@ msgstr "Abgeschlossen am {formattedDate}"
 
 #: apps/remix/app/components/general/document-signing/sign8-completion-overlay.tsx
 msgid "Completing Document"
-msgstr ""
+msgstr "Dokument wird abgeschlossen"
 
 #: packages/ui/components/pdf-viewer/pdf-viewer-konva.tsx
 #: packages/ui/components/pdf-viewer/pdf-viewer-konva.tsx
@@ -2604,7 +2652,7 @@ msgstr "Zusätzliche Optionen und Präferenzen konfigurieren"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 msgid "Configure custom email templates for different notification types. You can use variables to personalize your emails."
-msgstr ""
+msgstr "Konfigurieren Sie benutzerdefinierte E-Mail-Vorlagen für verschiedene Benachrichtigungstypen. Sie können Variablen verwenden, um Ihre E-Mails zu personalisieren."
 
 #: packages/lib/constants/template.ts
 msgid "Configure Direct Recipient"
@@ -3117,7 +3165,7 @@ msgstr "Derzeit können E-Mail-Domains nur für Plattform- und höhere Pläne ko
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 msgid "Custom"
-msgstr ""
+msgstr "Benutzerdefiniert"
 
 #. placeholder {0}: (field.value.size / (1024 * 1024)).toFixed(2)
 #: apps/remix/app/components/dialogs/template-use-dialog.tsx
@@ -3130,7 +3178,7 @@ msgstr "Benutzerdefinierte Organisationsgruppen"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 msgid "Customize the emails sent from your organisation."
-msgstr ""
+msgstr "Passen Sie die von Ihrer Organisation gesendeten E-Mails an."
 
 #: apps/remix/app/components/general/app-command-menu.tsx
 msgid "Dark Mode"
@@ -3178,7 +3226,7 @@ msgstr "Ablehnen"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 msgid "Default"
-msgstr ""
+msgstr "Standard"
 
 #: apps/remix/app/components/forms/document-preferences-form.tsx
 msgid "Default Date Format"
@@ -3210,7 +3258,7 @@ msgstr "Standardorganisation Rolle für neue Benutzer"
 
 #: apps/remix/app/components/forms/document-preferences-form.tsx
 msgid "Default Recipients"
-msgstr ""
+msgstr "Standardempfänger"
 
 #: apps/remix/app/components/forms/document-preferences-form.tsx
 msgid "Default Signature Settings"
@@ -4130,7 +4178,7 @@ msgstr "Doppelte Werte sind nicht erlaubt"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings._layout.tsx
 msgid "E-Mail Templates"
-msgstr ""
+msgstr "E-Mail-Vorlagen"
 
 #: packages/ui/primitives/document-flow/field-items-advanced-settings/number-field.tsx
 msgid "E.g. 0"
@@ -4290,7 +4338,7 @@ msgstr "E-Mail-Präferenzen aktualisiert"
 
 #: apps/remix/app/components/dialogs/email-template-preview-dialog.tsx
 msgid "Email Preview - {templateLabel}"
-msgstr ""
+msgstr "E-Mail-Vorschau – {templateLabel}"
 
 #: packages/lib/utils/document-audit-logs.ts
 msgid "Email resent"
@@ -4317,7 +4365,7 @@ msgstr "E-Mail-Einstellungen"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 msgid "Email Templates"
-msgstr ""
+msgstr "E-Mail-Vorlagen"
 
 #: apps/remix/app/components/general/document-signing/access-auth-2fa-form.tsx
 msgid "Email verification"
@@ -4410,7 +4458,7 @@ msgstr "Direktlink-Signierung aktivieren"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Enable secure connection (recommended for port 465)."
-msgstr ""
+msgstr "Sichere Verbindung aktivieren (empfohlen für Port 465)."
 
 #: apps/remix/app/components/embed/authoring/configure-document-recipients.tsx
 #: apps/remix/app/components/general/envelope-editor/envelope-editor-recipient-form.tsx
@@ -4429,7 +4477,7 @@ msgstr "Team-API-Tokens aktivieren, um das Dokumenteigentum an ein anderes Teamm
 
 #: apps/remix/app/components/forms/email-template-form.tsx
 msgid "Enable Template"
-msgstr ""
+msgstr "Vorlage aktivieren"
 
 #: apps/remix/app/components/dialogs/webhook-create-dialog.tsx
 #: apps/remix/app/components/dialogs/webhook-edit-dialog.tsx
@@ -4703,11 +4751,11 @@ msgstr "Alle haben unterschrieben! Sie erhalten eine Kopie des unterschriebenen 
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 msgid "Example email sent"
-msgstr ""
+msgstr "Beispiel-E-Mail gesendet"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 msgid "Example:"
-msgstr ""
+msgstr "Beispiel:"
 
 #: apps/remix/app/components/dialogs/passkey-create-dialog.tsx
 msgid "Exceeded timeout"
@@ -4780,7 +4828,7 @@ msgstr "Dokument konnte nicht erneut versiegelt werden"
 
 #: apps/remix/app/components/forms/email-template-form.tsx
 msgid "Failed to reset the template."
-msgstr ""
+msgstr "Die Vorlage konnte nicht zurückgesetzt werden."
 
 #: apps/remix/app/routes/_authenticated+/settings+/security.sessions.tsx
 msgid "Failed to revoke session"
@@ -4792,20 +4840,20 @@ msgstr "Einstellungen konnten nicht gespeichert werden."
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 msgid "Failed to save the template. Please try again."
-msgstr ""
+msgstr "Die Vorlage konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 msgid "Failed to send email"
-msgstr ""
+msgstr "E-Mail konnte nicht gesendet werden"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Failed to send test email."
-msgstr ""
+msgstr "Test-E-Mail konnte nicht gesendet werden."
 
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 msgid "Failed to sign fields"
-msgstr ""
+msgstr "Felder konnten nicht signiert werden"
 
 #: apps/remix/app/components/dialogs/session-logout-all-dialog.tsx
 msgid "Failed to sign out all sessions"
@@ -4813,7 +4861,7 @@ msgstr "Fehler beim Abmelden aller Sitzungen"
 
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 msgid "Failed to sign with Sign8"
-msgstr ""
+msgstr "Signierung mit Sign8 fehlgeschlagen"
 
 #: apps/remix/app/routes/_authenticated+/settings+/security.linked-accounts.tsx
 msgid "Failed to unlink account"
@@ -5020,11 +5068,11 @@ msgstr "Einstellungen für freie Unterschrift"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "From Address"
-msgstr ""
+msgstr "Absenderadresse"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "From Name"
-msgstr ""
+msgstr "Absendername"
 
 #: apps/remix/app/components/embed/embed-direct-template-client-page.tsx
 #: apps/remix/app/components/embed/embed-document-signing-page-v1.tsx
@@ -5665,15 +5713,15 @@ msgstr "Leer lassen, um von der Organisation zu erben."
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Leave blank to keep current"
-msgstr ""
+msgstr "Leer lassen, um den aktuellen Wert beizubehalten"
 
 #: apps/remix/app/components/forms/email-template-form.tsx
 msgid "Leave empty to use the default body."
-msgstr ""
+msgstr "Leer lassen, um den Standardinhalt zu verwenden."
 
 #: apps/remix/app/components/forms/email-template-form.tsx
 msgid "Leave empty to use the default subject."
-msgstr ""
+msgstr "Leer lassen, um den Standardbetreff zu verwenden."
 
 #: apps/remix/app/components/dialogs/organisation-leave-dialog.tsx
 msgid "Leave organisation"
@@ -6188,6 +6236,11 @@ msgstr "Neues Passwort"
 #: apps/remix/app/components/dialogs/team-group-create-dialog.tsx
 #: apps/remix/app/components/dialogs/team-member-create-dialog.tsx
 #: apps/remix/app/components/embed/embed-direct-template-client-page.tsx
+#: apps/remix/app/components/forms/editor/editor-field-dropdown-form.tsx
+#: packages/ui/primitives/document-flow/field-items-advanced-settings/dropdown-field.tsx
+msgid "New option"
+msgstr "Neue Option"
+
 #: apps/remix/app/components/embed/embed-document-signing-page-v1.tsx
 #: apps/remix/app/components/embed/multisign/multi-sign-document-signing-view.tsx
 #: packages/ui/primitives/signature-pad/signature-pad-dialog.tsx
@@ -6848,7 +6901,7 @@ msgstr "Platzhalter"
 
 #: apps/remix/app/components/dialogs/email-template-preview-dialog.tsx
 msgid "Plain Text"
-msgstr ""
+msgstr "Klartext"
 
 #. placeholder {0}: _(actionVerb).toLowerCase()
 #: packages/email/template-components/template-document-invite.tsx
@@ -6938,7 +6991,7 @@ msgstr "Bitte gib einen Wert ein"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Please enter an email address to send the test email to."
-msgstr ""
+msgstr "Bitte geben Sie eine E-Mail-Adresse ein, an die die Test-E-Mail gesendet werden soll."
 
 #: apps/remix/app/components/dialogs/sign-field-email-dialog.tsx
 msgid "Please enter your email address"
@@ -7082,7 +7135,7 @@ msgstr "Vorschau und Vorlagen konfigurieren."
 
 #: apps/remix/app/components/dialogs/email-template-preview-dialog.tsx
 msgid "Preview how your email will look with sample data."
-msgstr ""
+msgstr "Zeigen Sie eine Vorschau an, wie Ihre E-Mail mit Beispieldaten aussehen wird."
 
 #: apps/remix/app/components/general/envelope-editor/envelope-editor-preview-page.tsx
 #: apps/remix/app/components/general/envelope-editor/envelope-editor-preview-page.tsx
@@ -7177,7 +7230,7 @@ msgstr "Öffentliche Vorlagen sind mit Ihrem öffentlichen Profil verbunden. Än
 
 #: packages/ui/components/recipient/recipient-signature-level-select.tsx
 msgid "QES (Qualified)"
-msgstr ""
+msgstr "QES (Qualifiziert)"
 
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
@@ -7223,7 +7276,7 @@ msgstr "Nur lesen"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.support.tsx
 msgid "Read our documentation to get started with SIGN8."
-msgstr ""
+msgstr "Lesen Sie unsere Dokumentation, um mit SIGN8 zu beginnen."
 
 #: apps/remix/app/components/general/document-signing/document-signing-disclosure.tsx
 msgid "Read the full <0>signature disclosure</0>."
@@ -7307,7 +7360,7 @@ msgstr "Empfängeraktion Authentifizierung"
 
 #: apps/remix/app/components/dialogs/email-template-preview-dialog.tsx
 msgid "Recipient email address"
-msgstr ""
+msgstr "E-Mail-Adresse des Empfängers"
 
 #: packages/ui/components/document/document-email-checkboxes.tsx
 msgid "Recipient removed email"
@@ -7340,7 +7393,7 @@ msgstr "Empfängermetriken"
 
 #: apps/remix/app/components/forms/document-preferences-form.tsx
 msgid "Recipients that will be automatically added to new documents."
-msgstr ""
+msgstr "Empfänger, die automatisch zu neuen Dokumenten hinzugefügt werden."
 
 #: apps/remix/app/components/dialogs/envelope-distribute-dialog.tsx
 msgid "Recipients will be able to sign the document once sent"
@@ -7391,7 +7444,7 @@ msgstr "Weiterleitung"
 
 #: apps/remix/app/components/general/document-signing/sign8-completion-overlay.tsx
 msgid "Redirecting..."
-msgstr ""
+msgstr "Weiterleitung..."
 
 #: apps/remix/app/components/forms/signup.tsx
 #: apps/remix/app/components/general/claim-account.tsx
@@ -7605,7 +7658,7 @@ msgstr "Zurücksetzungs-E-Mail gesendet"
 
 #: apps/remix/app/components/forms/email-template-form.tsx
 msgid "Reset failed"
-msgstr ""
+msgstr "Zurücksetzen fehlgeschlagen"
 
 #: apps/remix/app/components/forms/forgot-password.tsx
 #: apps/remix/app/components/forms/reset-password.tsx
@@ -7620,7 +7673,7 @@ msgstr "Die Zwei-Faktor-Authentifizierung des Benutzers zurücksetzen. Diese Akt
 
 #: apps/remix/app/components/forms/email-template-form.tsx
 msgid "Reset to Default"
-msgstr ""
+msgstr "Auf Standard zurücksetzen"
 
 #: apps/remix/app/components/dialogs/admin-user-reset-two-factor-dialog.tsx
 msgid "Reset Two Factor Authentication"
@@ -7698,7 +7751,7 @@ msgstr "Zurück zur Anmeldung"
 
 #: apps/remix/app/routes/_unauthenticated+/o.$orgUrl.signin.tsx
 msgid "Return to SIGN8 sign in page here"
-msgstr ""
+msgstr "Hier zur SIGN8-Anmeldeseite zurückkehren"
 
 #: apps/remix/app/components/general/envelope-editor/envelope-editor.tsx
 msgid "Return to templates"
@@ -7769,7 +7822,7 @@ msgstr "Speichern fehlgeschlagen"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Save Settings"
-msgstr ""
+msgstr "Einstellungen speichern"
 
 #: apps/remix/app/components/forms/email-template-form.tsx
 #: packages/ui/primitives/template-flow/add-template-fields.tsx
@@ -7886,7 +7939,7 @@ msgstr "Wählen Sie ein Team aus, um sein Dashboard anzuzeigen"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 msgid "Select a template from the list to edit it."
-msgstr ""
+msgstr "Wählen Sie eine Vorlage aus der Liste aus, um sie zu bearbeiten."
 
 #: apps/remix/app/components/dialogs/public-profile-template-manage-dialog.tsx
 msgid "Select a template you'd like to display on your public profile"
@@ -7920,7 +7973,15 @@ msgstr "Wählen Sie eine Organisation, um Teams anzuzeigen"
 #: apps/remix/app/components/forms/editor/editor-field-checkbox-form.tsx
 #: packages/ui/primitives/document-flow/field-items-advanced-settings/checkbox-field.tsx
 msgid "Select at least"
-msgstr "Wählen Sie mindestens"
+msgstr "Mindestens auswählen"
+
+#: packages/ui/primitives/document-flow/field-items-advanced-settings/checkbox-field.tsx
+msgid "Select exactly"
+msgstr "Genau auswählen"
+
+#: packages/ui/primitives/document-flow/field-items-advanced-settings/checkbox-field.tsx
+msgid "Select at most"
+msgstr "Maximal auswählen"
 
 #: packages/ui/components/document/document-global-auth-action-select.tsx
 #: packages/ui/components/recipient/recipient-action-auth-select.tsx
@@ -7983,7 +8044,7 @@ msgstr "Passkey auswählen"
 #: apps/remix/app/components/general/default-recipients-multiselect-combobox.tsx
 #: apps/remix/app/components/general/default-recipients-multiselect-combobox.tsx
 msgid "Select recipients"
-msgstr ""
+msgstr "Empfänger auswählen"
 
 #: apps/remix/app/components/embed/authoring/configure-document-advanced-settings.tsx
 #: apps/remix/app/components/forms/document-preferences-form.tsx
@@ -8047,7 +8108,7 @@ msgstr "Senden"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Send a test email to verify your SMTP configuration."
-msgstr ""
+msgstr "Senden Sie eine Test-E-Mail, um Ihre SMTP-Konfiguration zu überprüfen."
 
 #: apps/remix/app/components/dialogs/webhook-test-dialog.tsx
 msgid "Send a test webhook with sample data to verify your integration is working correctly."
@@ -8094,7 +8155,7 @@ msgstr "Dokumente sofort an Empfänger senden"
 
 #: apps/remix/app/components/dialogs/email-template-preview-dialog.tsx
 msgid "Send Example"
-msgstr ""
+msgstr "Beispiel senden"
 
 #: apps/remix/app/components/forms/document-preferences-form.tsx
 msgid "Send on Behalf of Team"
@@ -8127,7 +8188,7 @@ msgstr "Erinnerungen an die folgenden Empfänger senden"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Send Test"
-msgstr ""
+msgstr "Test senden"
 
 #: apps/remix/app/components/tables/documents-table.tsx
 #: apps/remix/app/components/tables/inbox-table.tsx
@@ -8152,7 +8213,7 @@ msgstr "Gesendet"
 
 #: packages/ui/components/recipient/recipient-signature-level-select.tsx
 msgid "SES (Simple)"
-msgstr ""
+msgstr "EES (Einfach)"
 
 #: apps/remix/app/routes/_authenticated+/settings+/security.sessions.tsx
 msgid "Session revoked"
@@ -8329,16 +8390,16 @@ msgstr "Registrieren mit OIDC"
 
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 msgid "Sign8 Authentication Failed"
-msgstr ""
+msgstr "Sign8-Authentifizierung fehlgeschlagen"
 
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 msgid "Sign8 Error"
-msgstr ""
+msgstr "Sign8-Fehler"
 
 #: apps/remix/app/components/dialogs/account-delete-dialog.tsx
 msgid "SIGN8 will delete <0>all of your documents</0>, along with all of your completed documents, signatures, and all other resources belonging to your Account."
-msgstr ""
+msgstr "SIGN8 wird <0>alle Ihre Dokumente</0> löschen, zusammen mit allen abgeschlossenen Dokumenten, Signaturen und allen anderen Ressourcen, die zu Ihrem Konto gehören."
 
 #: apps/remix/app/components/dialogs/ai-field-detection-dialog.tsx
 #: apps/remix/app/components/embed/embed-direct-template-client-page.tsx
@@ -8430,7 +8491,7 @@ msgstr "Unterzeichnung"
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 msgid "Signing as"
-msgstr ""
+msgstr "Signieren als"
 
 #: apps/remix/app/routes/_internal+/[__htmltopdf]+/certificate.tsx
 #: packages/lib/server-only/pdf/render-certificate.ts
@@ -8450,7 +8511,7 @@ msgstr "Unterzeichnung abgeschlossen!"
 #. placeholder {0}: fieldsCompleted + 1
 #: apps/remix/app/components/general/document-signing/sign8-completion-overlay.tsx
 msgid "Signing field {0} of {fieldsTotal}"
-msgstr ""
+msgstr "Signaturfeld {0} von {fieldsTotal}"
 
 #: apps/remix/app/components/embed/embed-document-signing-page-v1.tsx
 msgid "Signing for"
@@ -8482,7 +8543,7 @@ msgstr "Registrierungen sind deaktiviert."
 
 #: packages/ui/components/recipient/recipient-signature-level-select.tsx
 msgid "Simple Electronic Signature: Basic drawn or typed signature without cryptographic verification. Suitable for internal documents and low-risk agreements."
-msgstr ""
+msgstr "Einfache elektronische Signatur: Einfache gezeichnete oder getippte Signatur ohne kryptografische Verifizierung. Geeignet für interne Dokumente und risikoarme Vereinbarungen."
 
 #. placeholder {0}: DateTime.fromJSDate(publicProfile.badge.since).toFormat('LLL ‘yy')
 #: apps/remix/app/routes/_profile+/p.$url.tsx
@@ -8509,23 +8570,23 @@ msgstr "SMTP-Konfiguration"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "SMTP Host"
-msgstr ""
+msgstr "SMTP-Host"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "SMTP Port"
-msgstr ""
+msgstr "SMTP-Port"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email.tsx
 msgid "SMTP settings updated"
-msgstr ""
+msgstr "SMTP-Einstellungen aktualisiert"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "SMTP with API Key"
-msgstr ""
+msgstr "SMTP mit API-Schlüssel"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "SMTP with Username/Password"
-msgstr ""
+msgstr "SMTP mit Benutzername/Passwort"
 
 #: packages/ui/primitives/document-flow/missing-signature-field-dialog.tsx
 msgid "Some signers have not been assigned a signature field. Please assign at least 1 signature field to each signer before proceeding."
@@ -8722,7 +8783,7 @@ msgstr "Betreff <0>(Optional)</0>"
 
 #: apps/remix/app/components/dialogs/email-template-preview-dialog.tsx
 msgid "Subject:"
-msgstr ""
+msgstr "Betreff:"
 
 #: apps/remix/app/components/forms/support-ticket-form.tsx
 msgid "Submit"
@@ -8827,7 +8888,7 @@ msgstr "Erfolg"
 
 #: apps/remix/app/components/general/document-signing/sign8-completion-overlay.tsx
 msgid "Success!"
-msgstr ""
+msgstr "Erfolg!"
 
 #: apps/remix/app/components/dialogs/passkey-create-dialog.tsx
 msgid "Successfully created passkey"
@@ -8895,7 +8956,7 @@ msgstr "Team"
 #. placeholder {0}: team.name
 #: packages/lib/server-only/team/delete-team.ts
 msgid "Team \"{0}\" has been deleted on SIGN8"
-msgstr ""
+msgstr "Team \"{0}\" wurde auf SIGN8 gelöscht"
 
 #: packages/lib/constants/teams-translations.ts
 msgid "Team Admin"
@@ -9090,7 +9151,7 @@ msgstr "Vorlage verschoben"
 
 #: apps/remix/app/components/forms/email-template-form.tsx
 msgid "Template reset"
-msgstr ""
+msgstr "Vorlage zurückgesetzt"
 
 #: apps/remix/app/components/general/template/template-edit-form.tsx
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
@@ -9130,20 +9191,20 @@ msgstr "Test"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Test Connection"
-msgstr ""
+msgstr "Verbindung testen"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Test email required"
-msgstr ""
+msgstr "Test-E-Mail erforderlich"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Test failed"
-msgstr ""
+msgstr "Test fehlgeschlagen"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Test successful"
-msgstr ""
+msgstr "Test erfolgreich"
 
 #: apps/remix/app/components/dialogs/webhook-test-dialog.tsx
 msgid "Test Webhook"
@@ -9159,7 +9220,7 @@ msgstr "Test-Webhook gesendet"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "test@example.com"
-msgstr ""
+msgstr "test@beispiel.de"
 
 #: apps/remix/app/components/dialogs/ai-field-detection-dialog.tsx
 #: apps/remix/app/components/general/document-signing/document-signing-text-field.tsx
@@ -9200,7 +9261,7 @@ msgstr "Danke, dass Sie den Signaturvorgang abgeschlossen haben."
 
 #: apps/remix/app/routes/_unauthenticated+/articles.signature-disclosure.tsx
 msgid "Thank you for using SIGN8 to perform your electronic document signing. The purpose of this disclosure is to inform you about the process, legality, and your rights regarding the use of electronic signatures on our platform. By opting to use an electronic signature, you are agreeing to the terms and conditions outlined below."
-msgstr ""
+msgstr "Vielen Dank, dass Sie SIGN8 für die elektronische Unterzeichnung Ihrer Dokumente verwenden. Der Zweck dieser Offenlegung ist es, Sie über den Prozess, die Rechtmäßigkeit und Ihre Rechte bezüglich der Verwendung elektronischer Signaturen auf unserer Plattform zu informieren. Indem Sie sich für die Verwendung einer elektronischen Signatur entscheiden, stimmen Sie den unten aufgeführten Bedingungen zu."
 
 #: packages/email/template-components/template-forgot-password.tsx
 msgid "That's okay, it happens! Click the button below to reset your password."
@@ -9246,7 +9307,7 @@ msgstr "Der direkte Linkt wurde in die Zwischenablage kopiert"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "The display name for outgoing emails."
-msgstr ""
+msgstr "Der Anzeigename für ausgehende E-Mails."
 
 #: apps/remix/app/components/dialogs/organisation-email-create-dialog.tsx
 #: apps/remix/app/components/dialogs/organisation-email-update-dialog.tsx
@@ -9332,7 +9393,7 @@ msgstr "Die Ereignisse, die einen Webhook auslösen, der an Ihre URL gesendet wi
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 msgid "The example email has been sent to {recipientEmail}."
-msgstr ""
+msgstr "Die Beispiel-E-Mail wurde an {recipientEmail} gesendet."
 
 #: apps/remix/app/components/general/legacy-field-warning-popover.tsx
 msgid "The fields have been updated to the new field insertion method successfully"
@@ -9454,7 +9515,7 @@ msgstr "Der Empfänger muss das Dokument anzeigen, damit es abgeschlossen werden
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "The sender email address."
-msgstr ""
+msgstr "Die Absender-E-Mail-Adresse."
 
 #: packages/ui/components/document/document-share-button.tsx
 msgid "The sharing link could not be created at this time. Please try again."
@@ -9498,7 +9559,7 @@ msgstr "Die Vorlage wurde erfolgreich verschoben."
 
 #: apps/remix/app/components/forms/email-template-form.tsx
 msgid "The template has been reset to default."
-msgstr ""
+msgstr "Die Vorlage wurde auf den Standard zurückgesetzt."
 
 #: apps/remix/app/components/dialogs/public-profile-template-manage-dialog.tsx
 msgid "The template will be removed from your profile"
@@ -9547,7 +9608,7 @@ msgstr "Die Signaturtypen, die Empfänger beim Unterschreiben des Dokuments verw
 #: apps/remix/app/components/dialogs/webhook-create-dialog.tsx
 #: apps/remix/app/components/dialogs/webhook-edit-dialog.tsx
 msgid "The URL for SIGN8 to send webhook events to."
-msgstr ""
+msgstr "Die URL, an die SIGN8 Webhook-Ereignisse sendet."
 
 #: apps/remix/app/routes/_authenticated+/admin+/users.$id.tsx
 msgid "The user you are looking for may have been removed, renamed or may have never existed."
@@ -9559,7 +9620,7 @@ msgstr "Die Zwei-Faktor-Authentifizierung des Nutzers wurde erfolgreich zurückg
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "The username for API key authentication (usually \"apikey\")."
-msgstr ""
+msgstr "Der Benutzername für die API-Schlüssel-Authentifizierung (normalerweise \"apikey\")."
 
 #: packages/ui/components/document/document-visibility-select.tsx
 msgid "The visibility of the document to the recipient."
@@ -9689,7 +9750,7 @@ msgstr "Dieses Dokument wurde von allen Empfängern unterschrieben"
 
 #: apps/remix/app/components/general/document/document-certificate-qr-view.tsx
 msgid "This document is available in your SIGN8 account. You can view more details, recipients, and audit logs there."
-msgstr ""
+msgstr "Dieses Dokument ist in Ihrem SIGN8-Konto verfügbar. Dort können Sie weitere Details, Empfänger und Audit-Protokolle einsehen."
 
 #: apps/remix/app/routes/_authenticated+/t.$teamUrl+/documents.$id._index.tsx
 msgid "This document is currently a draft and has not been sent"
@@ -9702,12 +9763,12 @@ msgstr "Dieses Dokument verwendet Altfeld-Integration, wir empfehlen die Verwend
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 msgid "This document requires a qualified electronic signature. Click \"Complete\" to be redirected to Sign8 where you will authenticate with your qualified certificate."
-msgstr ""
+msgstr "Dieses Dokument erfordert eine qualifizierte elektronische Signatur. Klicken Sie auf \"Abschließen\", um zu Sign8 weitergeleitet zu werden, wo Sie sich mit Ihrem qualifizierten Zertifikat authentifizieren."
 
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 #: apps/remix/app/components/general/document-signing/document-signing-sign8-qes.tsx
 msgid "This document requires an advanced electronic signature. Click \"Complete\" to be redirected to Sign8 where you will authenticate securely."
-msgstr ""
+msgstr "Dieses Dokument erfordert eine fortgeschrittene elektronische Signatur. Klicken Sie auf \"Abschließen\", um zu Sign8 weitergeleitet zu werden, wo Sie sich sicher authentifizieren."
 
 #: apps/remix/app/components/general/template/template-page-view-documents-table.tsx
 msgid "This document was created by you or a team member using the template above."
@@ -9808,7 +9869,7 @@ msgstr "Dieser Passkey ist für diese Anwendung nicht konfiguriert. Bitte melden
 
 #: apps/remix/app/components/dialogs/email-template-preview-dialog.tsx
 msgid "This preview uses sample data. Actual emails will contain real recipient and document information."
-msgstr ""
+msgstr "Diese Vorschau verwendet Beispieldaten. Tatsächliche E-Mails enthalten echte Empfänger- und Dokumentinformationen."
 
 #: apps/remix/app/components/general/envelope-editor/envelope-editor-fields-page.tsx
 #: packages/ui/primitives/document-flow/add-fields.tsx
@@ -10062,7 +10123,7 @@ msgstr "Dokumente auf ein anderes Team übertragen"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Transport Type"
-msgstr ""
+msgstr "Transporttyp"
 
 #: apps/remix/app/components/dialogs/webhook-create-dialog.tsx
 #: apps/remix/app/components/dialogs/webhook-edit-dialog.tsx
@@ -10539,7 +10600,7 @@ msgstr "Vorlage verwenden"
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Use TLS/SSL"
-msgstr ""
+msgstr "TLS/SSL verwenden"
 
 #: apps/remix/app/components/general/document-signing/access-auth-2fa-form.tsx
 msgid "Use your authenticator app to generate a code"
@@ -10598,7 +10659,7 @@ msgstr "Ein Benutzer mit dieser E-Mail existiert bereits. Bitte verwenden Sie ei
 
 #: apps/remix/app/components/forms/smtp-settings-form.tsx
 msgid "Username"
-msgstr ""
+msgstr "Benutzername"
 
 #: apps/remix/app/components/tables/organisation-insights-table.tsx
 #: apps/remix/app/routes/_authenticated+/admin+/_layout.tsx
@@ -10671,7 +10732,7 @@ msgstr "Überprüfen Sie Ihre Team-E-Mail-Adresse"
 
 #: apps/remix/app/components/general/document-signing/sign8-completion-overlay.tsx
 msgid "Verifying Signature"
-msgstr ""
+msgstr "Signatur wird verifiziert"
 
 #: apps/remix/app/components/forms/editor/editor-field-checkbox-form.tsx
 #: apps/remix/app/components/forms/editor/editor-field-radio-form.tsx
@@ -10783,7 +10844,7 @@ msgstr "Einladungen ansehen"
 
 #: apps/remix/app/components/tables/admin-document-logs-table.tsx
 msgid "View JSON"
-msgstr ""
+msgstr "JSON anzeigen"
 
 #: apps/remix/app/components/general/template/template-page-view-recent-activity.tsx
 msgid "View more"
@@ -10873,7 +10934,7 @@ msgstr "Warten auf Ihre Reihe"
 #: apps/remix/app/routes/_recipient+/sign.$token+/_index.tsx
 #: apps/remix/app/routes/_recipient+/sign.$token+/_index.tsx
 msgid "Want to send slick signing links like this one? <0>Check out SIGN8</0>."
-msgstr ""
+msgstr "Möchten Sie elegante Signierlinks wie diesen senden? <0>Testen Sie SIGN8</0>."
 
 #: apps/remix/app/routes/_profile+/_layout.tsx
 msgid "Want your own public profile?"
@@ -11176,7 +11237,7 @@ msgstr "Wir konnten Ihre E-Mail-Präferenzen derzeit nicht aktualisieren, bitte 
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email.tsx
 msgid "We were unable to update your SMTP settings at this time, please try again later"
-msgstr ""
+msgstr "Wir konnten Ihre SMTP-Einstellungen derzeit nicht aktualisieren, bitte versuchen Sie es später erneut"
 
 #: apps/remix/app/components/general/document-signing/document-signing-auth-2fa.tsx
 #: apps/remix/app/components/general/document-signing/document-signing-auth-password.tsx
@@ -11615,7 +11676,7 @@ msgstr "Was Sie mit Teams machen können:"
 
 #: apps/remix/app/components/forms/email-template-form.tsx
 msgid "When disabled, the default template will be used."
-msgstr ""
+msgstr "Wenn deaktiviert, wird die Standardvorlage verwendet."
 
 #: apps/remix/app/components/embed/authoring/configure-document-recipients.tsx
 #: apps/remix/app/components/general/envelope-editor/envelope-editor-recipient-form.tsx
@@ -11642,7 +11703,7 @@ msgstr "Ob das SSO-Portal für Ihre Organisation aktiviert werden soll"
 
 #: apps/remix/app/routes/_profile+/p.$url.tsx
 msgid "While waiting for them to do so you can create your own SIGN8 account and get started with document signing right away."
-msgstr ""
+msgstr "Während Sie darauf warten, können Sie Ihr eigenes SIGN8-Konto erstellen und sofort mit der Dokumentenunterzeichnung beginnen."
 
 #: apps/remix/app/components/dialogs/organisation-create-dialog.tsx
 msgid "Whitelabeling, unlimited members and more"
@@ -12300,7 +12361,7 @@ msgstr "Ihre E-Mail-Präferenzen wurden aktualisiert"
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email-templates.tsx
 msgid "Your email template has been updated."
-msgstr ""
+msgstr "Ihre E-Mail-Vorlage wurde aktualisiert."
 
 #: apps/remix/app/components/dialogs/envelope-distribute-dialog.tsx
 msgid "Your envelope has been distributed successfully."
@@ -12362,7 +12423,7 @@ msgstr "Ihr Plan unterstützt keine Mitglieder-Einladungen. Bitte aktualisieren 
 
 #: apps/remix/app/components/general/organisations/organisation-billing-banner.tsx
 msgid "Your plan is no longer valid. Please subscribe to a new plan to continue using Documenso."
-msgstr "Ihr Plan ist nicht mehr gültig. Bitte abonnieren Sie einen neuen Plan, um Documenso weiter zu nutzen."
+msgstr "Ihr Plan ist nicht mehr gültig. Bitte abonnieren Sie einen neuen Plan, um SIGN8 weiter zu nutzen."
 
 #: apps/remix/app/components/forms/profile.tsx
 msgid "Your profile has been updated successfully."
@@ -12387,7 +12448,7 @@ msgstr "Ihre Wiederherstellungscodes sind unten aufgeführt. Bitte bewahren Sie 
 
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.email.tsx
 msgid "Your SMTP settings have been updated"
-msgstr ""
+msgstr "Ihre SMTP-Einstellungen wurden aktualisiert"
 
 #: apps/remix/app/components/forms/support-ticket-form.tsx
 msgid "Your support request has been submitted. We'll get back to you soon!"

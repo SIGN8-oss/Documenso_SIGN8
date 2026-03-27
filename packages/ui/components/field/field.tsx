@@ -42,7 +42,8 @@ export function FieldContainerPortal({
       ...(!isCheckboxOrRadioField
         ? {
             height: `${coords.height}px`,
-            width: `${coords.width}px`,
+            width: field.inserted ? `${coords.width}px` : 'max-content',
+            minWidth: `${coords.width}px`,
           }
         : {
             maxWidth: `${maxWidth}px`,
@@ -55,7 +56,7 @@ export function FieldContainerPortal({
     }
 
     return bounds;
-  }, [coords, maxWidth, isCheckboxOrRadioField]);
+  }, [coords, maxWidth, isCheckboxOrRadioField, field.inserted]);
 
   return createPortal(
     <div className={cn('absolute', className)} style={style}>

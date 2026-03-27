@@ -110,13 +110,14 @@ export const EditorFieldDropdownForm = ({
   const addValue = () => {
     const currentValues = form.getValues('values') || [];
 
-    let newValue = 'New option';
+    const baseLabel = t(msg`New option`);
+    let newValue = baseLabel;
 
     // Iterate to create a unique value
     for (let i = 0; i < currentValues.length; i++) {
-      newValue = `New option ${i + 1}`;
-      if (currentValues.some((item) => item.value === `New option ${i + 1}`)) {
-        newValue = `New option ${i + 1}`;
+      newValue = `${baseLabel} ${i + 1}`;
+      if (currentValues.some((item) => item.value === `${baseLabel} ${i + 1}`)) {
+        newValue = `${baseLabel} ${i + 1}`;
       } else {
         break;
       }

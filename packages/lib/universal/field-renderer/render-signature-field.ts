@@ -60,25 +60,20 @@ const createFieldSignature = (
   const textX = 0;
   const textY = 0;
 
-  let textToRender: string = fieldTypeName;
-
   const signature = field.signature;
-
-  // Handle edit mode.
-  if (mode === 'edit') {
-    textToRender = fieldTypeName;
-  }
+  let isShowingLabel = true;
+  let textToRender: string = fieldTypeName;
+  let effectiveFontSize = fontSize;
 
   // Handle sign mode.
   if (mode === 'sign' || mode === 'export') {
-    textToRender = fieldTypeName;
-
     if (field.inserted && !signature) {
       throw new AppError('MISSING_SIGNATURE');
     }
 
     if (signature?.typedSignature) {
       textToRender = signature.typedSignature;
+      isShowingLabel = false;
     }
 
     if (signature?.signatureImageAsBase64) {
@@ -128,13 +123,20 @@ const createFieldSignature = (
     }
   }
 
+  // Scale the font down so the label fits on one line regardless of translation length.
+  // Caveat font: average char width ≈ fontSize * 0.6, so inverse factor is 1.6.
+  if (isShowingLabel) {
+    const fitFontSize = (fieldWidth / textToRender.length) * 1.6;
+    effectiveFontSize = Math.max(8, Math.min(fontSize, fitFontSize));
+  }
+
   fieldText.setAttrs({
     x: textX,
     y: textY,
     verticalAlign: 'middle',
     wrap: 'char',
     text: textToRender,
-    fontSize,
+    fontSize: effectiveFontSize,
     fontFamily: 'Caveat, sans-serif',
     align: 'center',
     width: fieldWidth,
