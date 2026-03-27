@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { Trans } from '@lingui/react/macro';
 import { PlusIcon, Trash } from 'lucide-react';
 import { useForm, useWatch } from 'react-hook-form';
@@ -88,6 +89,14 @@ export const EditorFieldCheckboxForm = ({
   },
   onValueChange,
 }: EditorFieldCheckboxFormProps) => {
+  const { _ } = useLingui();
+
+  const validationRuleLabels: Record<string, string> = {
+    'Select at least': _(msg`Select at least`),
+    'Select exactly': _(msg`Select exactly`),
+    'Select at most': _(msg`Select at most`),
+  };
+
   const form = useForm<TCheckboxFieldFormSchema>({
     resolver: zodResolver(ZCheckboxFieldFormSchema),
     mode: 'onChange',
@@ -220,7 +229,7 @@ export const EditorFieldCheckboxForm = ({
                         <SelectContent position="popper">
                           {checkboxValidationRules.map((item, index) => (
                             <SelectItem key={index} value={item}>
-                              {item}
+                              {validationRuleLabels[item] ?? item}
                             </SelectItem>
                           ))}
                         </SelectContent>

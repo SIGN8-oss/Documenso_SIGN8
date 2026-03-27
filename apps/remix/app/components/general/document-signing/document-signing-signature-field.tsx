@@ -245,7 +245,7 @@ export const DocumentSigningSignatureField = ({
       )}
 
       {state === 'empty' && (
-        <p className="font-signature text-[clamp(0.575rem,25cqw,1.2rem)] text-xl text-muted-foreground duration-200 group-hover:text-primary group-hover:text-recipient-green">
+        <p className="text-center text-[clamp(0.4rem,25cqw,0.75rem)] text-muted-foreground duration-200 group-hover:text-primary group-hover:text-recipient-green">
           <Trans>Signature</Trans>
         </p>
       )}

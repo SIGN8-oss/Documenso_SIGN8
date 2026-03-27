@@ -1,12 +1,25 @@
+import { useEffect } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { Trans } from '@lingui/react/macro';
 import { useForm } from 'react-hook-form';
+import { useBlocker } from 'react-router';
 import { z } from 'zod';
 
 import { useSession } from '@documenso/lib/client-only/providers/session';
 import { trpc } from '@documenso/trpc/react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@documenso/ui/primitives/alert-dialog';
 import { cn } from '@documenso/ui/lib/utils';
 import { Button } from '@documenso/ui/primitives/button';
 import {
@@ -55,6 +68,25 @@ export const ProfileForm = ({ className }: ProfileFormProps) => {
   });
 
   const isSubmitting = form.formState.isSubmitting;
+  const isDirty = form.formState.isDirty;
+
+  const blocker = useBlocker(() => isDirty && !isSubmitting);
+
+  useEffect(() => {
+    if (!isDirty || isSubmitting) {
+      return;
+    }
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isDirty, isSubmitting]);
 
   const { mutateAsync: updateProfile } = trpc.profile.updateProfile.useMutation();
 
@@ -66,6 +98,8 @@ export const ProfileForm = ({ className }: ProfileFormProps) => {
       });
 
       await refreshSession();
+
+      form.reset({ name, signature });
 
       toast({
         title: _(msg`Profile updated`),
@@ -135,10 +169,34 @@ export const ProfileForm = ({ className }: ProfileFormProps) => {
           />
         </fieldset>
 
-        <Button type="submit" loading={isSubmitting} className="self-end">
+        <Button type="submit" loading={isSubmitting} disabled={!isDirty} className="self-end">
           <Trans>Update profile</Trans>
         </Button>
       </form>
+
+      <AlertDialog open={blocker.state === 'blocked'}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              <Trans>Unsaved changes</Trans>
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              <Trans>
+                You have unsaved changes. Are you sure you want to leave this page? Your changes will
+                be lost.
+              </Trans>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => blocker.reset?.()}>
+              <Trans>Stay on page</Trans>
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={() => blocker.proceed?.()}>
+              <Trans>Leave page</Trans>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Form>
   );
 };

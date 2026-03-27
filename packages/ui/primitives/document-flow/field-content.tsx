@@ -193,14 +193,14 @@ export const FieldContent = ({ field, documentMeta }: FieldIconProps) => {
   const textAlign = fieldMeta && 'textAlign' in fieldMeta ? fieldMeta.textAlign : 'left';
 
   return (
-    <div className="flex h-full w-full items-center overflow-hidden">
+    <div className={cn('flex h-full w-full items-center', { 'overflow-hidden': !!textToDisplay })}>
       <p
         className={cn(
           'w-full whitespace-pre-wrap text-left text-[clamp(0.07rem,25cqw,0.825rem)] text-foreground duration-200',
           {
             '!text-center': textAlign === 'center' || !textToDisplay,
             '!text-right': textAlign === 'right',
-            'font-signature text-[clamp(0.07rem,25cqw,1.125rem)]': isSignatureField,
+            'font-signature text-[clamp(0.07rem,25cqw,1.125rem)]': isSignatureField && !!textToDisplay,
           },
         )}
       >

@@ -64,7 +64,7 @@ export default function TokenDeleteDialog({ token, onDelete, children }: TokenDe
 
   const form = useForm<TDeleteTokenByIdMutationSchema>({
     resolver: zodResolver(ZTokenDeleteDialogSchema),
-    values: {
+    defaultValues: {
       tokenName: '',
     },
   });

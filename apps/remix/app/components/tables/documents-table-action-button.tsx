@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/react/macro';
 import { DocumentStatus, RecipientRole, SigningStatus } from '@prisma/client';
-import { CheckCircle, Download, Edit, EyeIcon, Pencil } from 'lucide-react';
+import { CheckCircle, DownloadIcon, Edit, EyeIcon, Pencil } from 'lucide-react';
 import { Link } from 'react-router';
 import { match } from 'ts-pattern';
 
@@ -101,7 +101,7 @@ export const DocumentsTableActionButton = ({ row }: DocumentsTableActionButtonPr
         token={recipient?.token}
         trigger={
           <Button className="w-32">
-            <Download className="-ml-1 mr-2 inline h-4 w-4" />
+            <DownloadIcon className="-ml-1 mr-2 h-4 w-4" />
             <Trans>Download</Trans>
           </Button>
         }

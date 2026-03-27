@@ -42,8 +42,9 @@ export const DropdownFieldAdvancedSettings = ({
   const [defaultValue, setDefaultValue] = useState(fieldState.defaultValue ?? 'Option 1');
 
   const addValue = () => {
-    setValues([...values, { value: 'New option' }]);
-    handleFieldChange('values', [...values, { value: 'New option' }]);
+    const newOption = _(msg`New option`);
+    setValues([...values, { value: newOption }]);
+    handleFieldChange('values', [...values, { value: newOption }]);
   };
 
   const removeValue = (index: number) => {

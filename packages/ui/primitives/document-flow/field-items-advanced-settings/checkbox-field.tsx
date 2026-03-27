@@ -38,6 +38,12 @@ export const CheckboxFieldAdvancedSettings = ({
 }: CheckboxFieldAdvancedSettingsProps) => {
   const { _ } = useLingui();
 
+  const validationRuleLabels: Record<string, string> = {
+    'Select at least': _(msg`Select at least`),
+    'Select exactly': _(msg`Select exactly`),
+    'Select at most': _(msg`Select at most`),
+  };
+
   const [showValidation, setShowValidation] = useState(false);
   const [values, setValues] = useState(fieldState.values ?? [{ id: 1, checked: false, value: '' }]);
   const [readOnly, setReadOnly] = useState(fieldState.readOnly ?? false);
@@ -183,7 +189,7 @@ export const CheckboxFieldAdvancedSettings = ({
             <SelectContent position="popper">
               {checkboxValidationRules.map((item, index) => (
                 <SelectItem key={index} value={item}>
-                  {item}
+                  {validationRuleLabels[item] ?? item}
                 </SelectItem>
               ))}
             </SelectContent>
